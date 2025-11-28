@@ -1,0 +1,666 @@
+<!-- === Photo & Print Size Calculator (Squarespace Code Block) === -->
+
+<style>
+  /* Inherit your site's fonts and colours */
+  .photo-calculator, .photo-calculator * {
+    box-sizing: border-box;
+    font: inherit !important;
+    color: inherit !important;
+  }
+
+  /* Theme variables with sensible fallbacks */
+  .photo-calculator {
+    --accent: var(--sqs-color-accent, #F05922);
+    --bg: var(--sqs-color-background, transparent);
+    --bg-soft: var(--sqs-color-background-secondary, #f5f5f5);
+    --border: var(--sqs-color-border, #eaeaea);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background: var(--bg);
+    border-radius: 8px;
+  }
+
+  .calculator-header {
+    display: flex; align-items: center;
+    margin-bottom: 24px; background: var(--bg-soft);
+    padding: 16px; border-radius: 8px; border: 1px solid var(--border);
+  }
+  .calculator-logo { width: 72px; height: 72px; margin-right: 16px; }
+  .calculator-title { margin: 0 0 4px; font-weight: 700; line-height: 1.25; }
+  .calculator-description { margin: 0; opacity: .9; }
+
+  /* Tabs */
+  .tabs { display: flex; flex-direction: column; width: 100%; }
+  .tab-list {
+    display: flex; flex-wrap: wrap; gap: 6px 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-soft); padding: 8px 10px 0; border-radius: 8px 8px 0 0;
+    margin-bottom: 14px;
+  }
+  .tab-trigger {
+    padding: 10px 16px; background: transparent; border: none;
+    border-bottom: 2px solid transparent; cursor: pointer; font-weight: 600;
+    opacity: .8;
+  }
+  .tab-trigger:hover { opacity: 1; }
+  .tab-trigger.active { border-bottom-color: var(--accent); opacity: 1; }
+
+  /* Unit selector */
+  .unit-selector { display: flex; gap: 10px; margin-bottom: 16px; background: var(--bg-soft);
+    padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+  .unit-button {
+    flex: 1; padding: 8px 12px; background: #fff; border: 1px solid var(--border);
+    border-radius: 4px; text-align: center; cursor: pointer; font-weight: 600;
+  }
+  .unit-button:hover { background: #fafafa; }
+  .unit-button.active { background: var(--accent); color: #fff !important; border-color: var(--accent); }
+
+  /* Cards */
+  .card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+  .card-header { padding: 14px 16px; background: var(--bg-soft); border-bottom: 1px solid var(--border); }
+  .card-title { margin: 0; font-weight: 700; }
+  .card-description { margin: 4px 0 0; opacity: .9; }
+  .card-content { padding: 16px; }
+
+  /* Forms */
+  .form-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+  @media (min-width: 640px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+  .form-group { margin: 0; }
+  .form-label { display: block; margin-bottom: 6px; font-weight: 500; }
+  .form-input, .form-select {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px;
+    background: #fff;
+  }
+  .form-input:focus, .form-select:focus { outline: none; box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 85%); border-color: var(--accent); }
+
+  .button-group { display: flex; gap: 10px; flex-wrap: wrap; }
+  .button { flex: 1; min-width: 120px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; font-weight: 600; background: #fff; }
+  .button-outline { background: transparent; }
+  .button-primary { background: var(--accent); color: #fff !important; border-color: var(--accent); }
+  .button-primary:hover { filter: brightness(.92); }
+
+  /* Results & table */
+  .results { margin-top: 12px; padding: 12px; background: #fafafa; border-left: 3px solid var(--accent); border-radius: 4px; }
+  .results-title { margin: 0 0 6px; font-weight: 700; }
+  .table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+  .table th { background: var(--bg-soft); font-weight: 600; }
+  .table tr.category-header td { background: #eef1f4; font-weight: 700; }
+
+  /* Quality colours */
+  .quality-excellent { color: #22c55e !important; font-weight: 700; }
+  .quality-verygood { color: #16a34a !important; font-weight: 700; }
+  .quality-good { color: #eab308 !important; font-weight: 700; }
+  .quality-fair { color: #f59e0b !important; font-weight: 700; }
+  .quality-poor { color: #ef4444 !important; font-weight: 700; }
+
+  .aspect-ratio-info { margin: 8px 0; padding: 10px; background: var(--bg-soft); border-radius: 6px; border: 1px solid var(--border); }
+
+  /* Print area (hidden) */
+  #printable-area { display: none; }
+  @media print {
+    @page { margin: 2cm; }
+    body * { visibility: hidden; }
+    #printable-area, #printable-area * { visibility: visible; }
+    #printable-area { display: block; position: absolute; left: 0; top: 0; width: 100%; }
+  }
+
+  /* ▼ FIX: Only show the active tab panel */
+  .photo-calculator .tab-content { display: none !important; }
+  .photo-calculator .tab-content.active { display: block !important; }
+</style>
+
+<div class="photo-calculator" id="photo-calculator">
+  <div class="calculator-header">
+    <img class="calculator-logo" alt="Alan Ranger Photography" src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ALAN%20RANGER%20ICON-5xXpXpCAImQHe0hqRbYWldP4Vfnmjl.png" />
+    <div class="calculator-title-container">
+      <h2 class="calculator-title">Photo and Print Size Calculator</h2>
+      <p class="calculator-description">Calculate optimal print sizes, required megapixels and viewing distances from your image pixels, aspect ratio and target quality.</p>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab-list">
+      <button class="tab-trigger active" data-tab="original-calculator">Original Calculator</button>
+      <button class="tab-trigger" data-tab="pixel-to-physical">Pixels to Size</button>
+      <button class="tab-trigger" data-tab="physical-to-pixel">Size to Pixels</button>
+      <button class="tab-trigger" data-tab="print-quality">Print Quality</button>
+    </div>
+
+    <div class="unit-selector">
+      <div class="unit-button" data-unit="mm">mm</div>
+      <div class="unit-button" data-unit="cm">cm</div>
+      <div class="unit-button active" data-unit="in">inches</div>
+    </div>
+
+    <!-- Original Calculator -->
+    <div class="tab-content active" id="original-calculator">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Photo Size Calculator</h3>
+          <p class="card-description">Enter image pixels and (optionally) choose a standard aspect ratio to preview cropping.</p>
+        </div>
+        <div class="card-content">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="original-width">Photo Width (pixels)</label>
+              <input class="form-input" id="original-width" type="number" placeholder="e.g., 6000">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="original-height">Photo Height (pixels)</label>
+              <input class="form-input" id="original-height" type="number" placeholder="e.g., 4000">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="aspect-ratio">Aspect Ratio</label>
+            <select class="form-select" id="aspect-ratio">
+              <option value="0">Original</option>
+              <option value="1">1:1 (Square)</option>
+              <option value="1.5">3:2 (Standard)</option>
+              <option value="1.3333333333">4:3 (Classic)</option>
+              <option value="1.25">5:4 (Large Format)</option>
+              <option value="1.4">7:5 (Medium Format)</option>
+              <option value="1.7777777778">16:9 (Widescreen)</option>
+              <option value="2">2:1 (Panoramic)</option>
+            </select>
+          </div>
+
+          <div id="aspect-ratio-info" class="aspect-ratio-info" style="display:none;"></div>
+
+          <div class="form-group">
+            <label class="form-label" for="original-quality">Desired Print Quality</label>
+            <select class="form-select" id="original-quality">
+              <option value="300">Excellent (300 PPI)</option>
+              <option value="240">Very Good (240 PPI)</option>
+              <option value="180">Good (180 PPI)</option>
+              <option value="150">Fair (150 PPI)</option>
+            </select>
+          </div>
+
+          <div class="button-group">
+            <button class="button button-primary" id="original-calculate">Calculate</button>
+            <button class="button button-outline" id="original-reset">Reset</button>
+            <button class="button button-outline" id="original-print">Print Results</button>
+          </div>
+
+          <div id="original-result" class="results" style="display:none;" aria-live="polite"></div>
+
+          <table id="sizesTable" class="table" style="display:none; margin-top: 12px;">
+            <thead>
+              <tr>
+                <th>Print Size</th>
+                <th>Dimensions (in)</th>
+                <th>Aspect</th>
+                <th>Required MP</th>
+                <th>Viewing Distance</th>
+                <th>Quality</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pixels to Physical Size -->
+    <div class="tab-content" id="pixel-to-physical">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Convert Pixels to Physical Size</h3>
+          <p class="card-description">Enter image pixel dimensions and choose a resolution (DPI/PPI).</p>
+        </div>
+        <div class="card-content">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="pixel-width">Width (pixels)</label>
+              <input class="form-input" id="pixel-width" type="number" placeholder="e.g., 3000">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pixel-height">Height (pixels)</label>
+              <input class="form-input" id="pixel-height" type="number" placeholder="e.g., 2000">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="dpi">Resolution (DPI/PPI)</label>
+            <select class="form-select" id="dpi">
+              <option value="72">72 DPI (Web/Screen)</option>
+              <option value="150">150 DPI (Fair Print)</option>
+              <option value="240">240 DPI (Good Print)</option>
+              <option value="300" selected>300 DPI (Excellent Print)</option>
+              <option value="600">600 DPI (Professional Print)</option>
+            </select>
+          </div>
+
+          <div class="button-group">
+            <button class="button button-primary" id="calculate-pixel-to-physical">Calculate</button>
+            <button class="button button-outline" id="reset-pixel-to-physical">Reset</button>
+          </div>
+
+          <div class="results" id="pixel-to-physical-result" style="display:none;">
+            <h4 class="results-title">Results:</h4>
+            <div id="pixel-to-physical-result-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Physical Size to Pixels -->
+    <div class="tab-content" id="physical-to-pixel">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Convert Physical Size to Pixels</h3>
+          <p class="card-description">Enter the target physical size and resolution to get exact pixel dimensions.</p>
+        </div>
+        <div class="card-content">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="physical-width">Width (<span class="unit-label">in</span>)</label>
+              <input class="form-input" id="physical-width" type="number" placeholder="e.g., 10">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="physical-height">Height (<span class="unit-label">in</span>)</label>
+              <input class="form-input" id="physical-height" type="number" placeholder="e.g., 8">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="target-dpi">Target Resolution (DPI/PPI)</label>
+            <select class="form-select" id="target-dpi">
+              <option value="72">72 DPI (Web/Screen)</option>
+              <option value="150">150 DPI (Fair Print)</option>
+              <option value="240">240 DPI (Good Print)</option>
+              <option value="300" selected>300 DPI (Excellent Print)</option>
+              <option value="600">600 DPI (Professional Print)</option>
+            </select>
+          </div>
+
+          <div class="button-group">
+            <button class="button button-primary" id="calculate-physical-to-pixel">Calculate</button>
+            <button class="button button-outline" id="reset-physical-to-pixel">Reset</button>
+          </div>
+
+          <div class="results" id="physical-to-pixel-result" style="display:none;">
+            <h4 class="results-title">Results:</h4>
+            <div id="physical-to-pixel-result-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Quality -->
+    <div class="tab-content" id="print-quality">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Calculate Print Quality</h3>
+          <p class="card-description">Check effective DPI and expected quality for a chosen print size.</p>
+        </div>
+        <div class="card-content">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="image-width">Image Width (pixels)</label>
+              <input class="form-input" id="image-width" type="number" placeholder="e.g., 3000">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="image-height">Image Height (pixels)</label>
+              <input class="form-input" id="image-height" type="number" placeholder="e.g., 2000">
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="print-width">Print Width (<span class="unit-label">in</span>)</label>
+              <input class="form-input" id="print-width" type="number" placeholder="e.g., 10">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="print-height">Print Height (<span class="unit-label">in</span>)</label>
+              <input class="form-input" id="print-height" type="number" placeholder="e.g., 8">
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button class="button button-primary" id="calculate-print-quality">Calculate</button>
+            <button class="button button-outline" id="reset-print-quality">Reset</button>
+          </div>
+
+          <div class="results" id="print-quality-result" style="display:none;">
+            <h4 class="results-title">Results:</h4>
+            <div id="print-quality-result-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Technical specs -->
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Technical Specifications</h3></div>
+    <div class="card-content">
+      <div class="form-group">
+        <label class="form-label" for="color-depth">Color Depth</label>
+        <select class="form-select" id="color-depth">
+          <option value="1">1-bit (Monochrome)</option>
+          <option value="8">8-bit (Grayscale/256 colors)</option>
+          <option value="24" selected>24-bit (16.7 million colors)</option>
+          <option value="32">32-bit (16.7 million colors + alpha)</option>
+          <option value="48">48-bit (High-end color)</option>
+        </select>
+      </div>
+
+      <div class="results" id="file-size-result" style="display:none;">
+        <h4 class="results-title">File Size Estimation:</h4>
+        <table class="table"><tbody id="file-size-table"></tbody></table>
+        <p class="note" style="opacity:.9">Uncompressed estimate; actual sizes vary by format and compression.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="attribution" style="text-align:center; opacity:.8; margin-top:10px;">
+    By Alan Ranger Photography — <a href="https://www.alanranger.com" target="_blank">www.alanranger.com</a>
+  </div>
+</div>
+
+<!-- Printable Area (for 'Print Results') -->
+<div id="printable-area">
+  <div id="printable-result"></div>
+  <table class="table" id="printable-table"></table>
+  <div id="printable-attribution">By Alan Ranger Photography — www.alanranger.com</div>
+</div>
+
+<script>
+(function(){
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => Array.from(document.querySelectorAll(s));
+  const gcd = (a,b)=> b===0 ? a : gcd(b, a % b);
+  const round = (n,d=2)=> Number.parseFloat(n).toFixed(d);
+  const inchesTo = (inches, unit) => unit==='cm' ? inches*2.54 : unit==='mm' ? inches*25.4 : inches;
+  const unitLabel = (unit)=> unit==='cm' ? 'cm' : unit==='mm' ? 'mm' : 'in';
+
+  const PRINT_SIZES = [
+    { category: "Small Prints", sizes: [
+      { name: "4×6",  w:6,  h:4 }, { name: "5×7",  w:7,  h:5 }, { name: "6×8",  w:8,  h:6 },
+      { name: "8×10", w:10, h:8 }, { name: "8.5×11", w:11, h:8.5 }, { name: "9×12",  w:12, h:9 }
+    ]},
+    { category: "Medium Prints", sizes: [
+      { name: "11×14", w:14,h:11 }, { name: "12×16", w:16,h:12 }, { name: "12×18", w:18,h:12 },
+      { name: "16×20", w:20,h:16 }, { name: "18×24", w:24,h:18 }, { name: "20×24", w:24,h:20 },
+      { name: "20×30", w:30,h:20 }, { name: "24×30", w:30,h:24 }, { name: "24×36", w:36,h:24 }
+    ]},
+    { category: "Large Prints", sizes: [
+      { name: "30×40", w:40,h:30 }, { name: "32×48", w:48,h:32 }, { name: "36×48", w:48,h:36 }
+    ]},
+    { category: "Square Prints", sizes: [
+      { name: "5×5", w:5,h:5 }, { name: "8×8", w:8,h:8 }, { name: "10×10", w:10,h:10 },
+      { name: "12×12", w:12,h:12 }, { name: "16×16", w:16,h:16 }, { name: "20×20", w:20,h:20 },
+      { name: "24×24", w:24,h:24 }, { name: "30×30", w:30,h:30 }, { name: "36×36", w:36,h:36 }
+    ]},
+    { category: "Panoramic Prints", sizes: [
+      { name: "6×12", w:12,h:6 }, { name: "8×16", w:16,h:8 }, { name: "8×20", w:20,h:8 },
+      { name: "10×20", w:20,h:10 }, { name: "10×30", w:30,h:10 }, { name: "12×24", w:24,h:12 },
+      { name: "12×36", w:36,h:12 }, { name: "15×30", w:30,h:15 }, { name: "20×40", w:40,h:20 }
+    ]}
+  ];
+
+  let currentUnit = 'in';
+
+  // Tabs
+  $$('.tab-trigger').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.dataset.tab;
+      $$('.tab-trigger').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      $$('.tab-content').forEach(c=>{
+        c.classList.remove('active');
+        if(c.id===id) c.classList.add('active');
+      });
+    });
+  });
+
+  // Units
+  $$('.unit-button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const unit = b.dataset.unit;
+      $$('.unit-button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      $$('.unit-label').forEach(l=> l.textContent = unitLabel(unit));
+      currentUnit = unit;
+      updatePlaceholders();
+    });
+  });
+
+  function updatePlaceholders(){
+    const pw = $('#physical-width'), ph = $('#physical-height');
+    const rw = $('#print-width'), rh = $('#print-height');
+    if(!pw || !ph || !rw || !rh) return;
+    if(currentUnit==='in'){
+      pw.placeholder = rw.placeholder = 'e.g., 10';
+      ph.placeholder = rh.placeholder = 'e.g., 8';
+    }else if(currentUnit==='cm'){
+      pw.placeholder = rw.placeholder = 'e.g., 25.4';
+      ph.placeholder = rh.placeholder = 'e.g., 20.32';
+    }else{
+      pw.placeholder = rw.placeholder = 'e.g., 254';
+      ph.placeholder = rh.placeholder = 'e.g., 203.2';
+    }
+  }
+  updatePlaceholders();
+
+  // Aspect info
+  function showAspectInfo(){
+    const w = parseInt($('#original-width').value,10);
+    const h = parseInt($('#original-height').value,10);
+    const box = $('#aspect-ratio-info');
+    if(!w || !h){ box.style.display='none'; box.innerHTML=''; return; }
+    const d = gcd(w,h);
+    const simpleW = Math.round(w/d), simpleH = Math.round(h/d);
+    const ratio = (w/h);
+    const select = $('#aspect-ratio');
+    let closest = { name:'Original', value:ratio, diff:Infinity };
+    Array.from(select.options).forEach((o,idx)=>{
+      if(idx===0) return;
+      const v = parseFloat(o.value);
+      const diff = Math.abs(v - ratio);
+      if(diff < closest.diff){ closest = { name:o.text, value:v, diff }; }
+    });
+    box.innerHTML = `
+      <p>Your image’s aspect ratio: <strong>$</strong> ($:1)</p>
+      <p>Nearest standard ratio: <strong>$</strong></p>
+      <p style="margin:0">Tip: Keep “Original” to preserve your ratio, or pick a preset to preview cropping.</p>
+    `;
+    box.style.display='block';
+  }
+  $('#original-width').addEventListener('input', showAspectInfo);
+  $('#original-height').addEventListener('input', showAspectInfo);
+
+  // Original calculator
+  function calculateOriginal(){
+    const w = parseInt($('#original-width').value,10);
+    const h = parseInt($('#original-height').value,10);
+    const ar = parseFloat($('#aspect-ratio').value);
+    const ppi = parseInt($('#original-quality').value,10);
+    if(!w || !h){ alert('Please enter both photo width and height.'); return; }
+
+    let cw=w, ch=h;
+    if(ar!==0){
+      const cr = w/h;
+      if(cr > ar){ cw = Math.round(h*ar); ch = h; }
+      else if(cr < ar){ cw = w; ch = Math.round(w/ar); }
+    }
+
+    const maxW_in = cw/ppi, maxH_in = ch/ppi;
+    const mp = (cw*ch/1e6).toFixed(2);
+
+    $('#original-result').innerHTML = `
+      <h4 class="results-title">Results</h4>
+      <p>Original: <strong>$</strong> × <strong>$</strong> px</p>
+      <p>Converted (after aspect): <strong>$</strong> × <strong>$</strong> px</p>
+      <p>Megapixels: <strong>$ MP</strong></p>
+      <p>Max print @ $ PPI: <strong>$″ × $″</strong></p>
+    `;
+    $('#original-result').style.display='block';
+
+    const tbody = $('#sizesTable tbody');
+    tbody.innerHTML = '';
+    let printableHTML = `
+      <thead><tr>
+        <th>Print Size</th><th>Dimensions (in)</th><th>Aspect</th>
+        <th>Required MP</th><th>Viewing Distance</th><th>Quality</th>
+      </tr></thead><tbody>
+    `;
+
+    PRINT_SIZES.forEach(cat=>{
+      const trHeader = document.createElement('tr');
+      trHeader.className = 'category-header';
+      trHeader.innerHTML = `<td colspan="6">$</td>`;
+      tbody.appendChild(trHeader);
+      printableHTML += `<tr class="category-header"><td colspan="6">$</td></tr>`;
+
+      cat.sizes.forEach(s=>{
+        const reqMP = ((s.w*s.h*ppi*ppi)/1e6).toFixed(2);
+        const eff = Math.min(cw/s.w, ch/s.h);
+        let qTxt='✗ Poor (<150 PPI)', qClass='quality-poor';
+        if(eff>=300){ qTxt='✓ Excellent (300+ PPI)'; qClass='quality-excellent'; }
+        else if(eff>=240){ qTxt='✓ Very Good (240+ PPI)'; qClass='quality-verygood'; }
+        else if(eff>=180){ qTxt='✓ Good (180+ PPI)'; qClass='quality-good'; }
+        else if(eff>=150){ qTxt='✓ Fair (150+ PPI)'; qClass='quality-fair'; }
+        const dIn = Math.sqrt(s.w*s.w + s.h*s.h);
+        const view = Math.round(dIn*2);
+        const g = gcd(s.w, s.h);
+        const arLabel = `$`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>$</td>
+          <td>$″ × $″</td>
+          <td>$</td>
+          <td>$ MP</td>
+          <td>$″ min</td>
+          <td><span class="$</span></td>
+        `;
+        tbody.appendChild(tr);
+
+        printableHTML += `
+          <tr>
+            <td>$″ × $</td>
+            <td>$ MP</td><td>$″ min</td><td>$</td>
+          </tr>
+        `;
+      });
+    });
+    printableHTML += '</tbody>';
+    $('#printable-table').innerHTML = printableHTML;
+    $('#sizesTable').style.display='table';
+
+    calculateFileSize(cw, ch);
+  }
+  $('#original-calculate').addEventListener('click', calculateOriginal);
+
+  // File size estimator
+  function calculateFileSize(pxW, pxH){
+    const depth = parseInt($('#color-depth').value,10);
+    const bits = pxW*pxH*depth;
+    const bytes = bits/8, kb = bytes/1024, mb = kb/1024;
+    $('#file-size-table').innerHTML = `
+      <tr><td>Bits</td><td>$</td></tr>
+      <tr><td>Bytes</td><td>$</td></tr>
+      <tr><td>Kilobytes (KB)</td><td>$</td></tr>
+      <tr><td>Megabytes (MB)</td><td>$</td></tr>
+    `;
+    $('#file-size-result').style.display='block';
+  }
+
+  // Pixel → Physical
+  $('#calculate-pixel-to-physical').addEventListener('click', ()=>{
+    const pw = parseFloat($('#pixel-width').value);
+    const ph = parseFloat($('#pixel-height').value);
+    const dpi = parseFloat($('#dpi').value);
+    if(!pw || !ph || !dpi){ alert('Please enter all required values.'); return; }
+    const wIn = pw/dpi, hIn = ph/dpi;
+    const wOut = inchesTo(wIn, currentUnit), hOut = inchesTo(hIn, currentUnit);
+    const mp = (pw*ph/1e6).toFixed(2);
+    $('#pixel-to-physical-result-content').innerHTML = `
+      <p>Physical Size: <strong>$ × $ $</strong></p>
+      <p>Megapixels: <strong>$ MP</strong></p>
+    `;
+    $('#pixel-to-physical-result').style.display='block';
+    calculateFileSize(pw, ph);
+  });
+
+  // Physical → Pixel
+  $('#calculate-physical-to-pixel').addEventListener('click', ()=>{
+    const pw = parseFloat($('#physical-width').value);
+    const ph = parseFloat($('#physical-height').value);
+    const dpi = parseFloat($('#target-dpi').value);
+    if(!pw || !ph || !dpi){ alert('Please enter all required values.'); return; }
+    const wIn = currentUnit==='in' ? pw : currentUnit==='cm' ? pw/2.54 : pw/25.4;
+    const hIn = currentUnit==='in' ? ph : currentUnit==='cm' ? ph/2.54 : ph/25.4;
+    const pxW = Math.round(wIn*dpi), pxH = Math.round(hIn*dpi);
+    const mp = (pxW*pxH/1e6).toFixed(2);
+    $('#physical-to-pixel-result-content').innerHTML = `
+      <p>Required Resolution: <strong>$ × $ pixels</strong></p>
+      <p>Megapixels: <strong>$ MP</strong></p>
+    `;
+    $('#physical-to-pixel-result').style.display='block';
+    calculateFileSize(pxW, pxH);
+  });
+
+  // Print quality
+  $('#calculate-print-quality').addEventListener('click', ()=>{
+    const iw = parseFloat($('#image-width').value);
+    const ih = parseFloat($('#image-height').value);
+    const pw = parseFloat($('#print-width').value);
+    const ph = parseFloat($('#print-height').value);
+    if(!iw || !ih || !pw || !ph){ alert('Please enter all required values.'); return; }
+    const wIn = currentUnit==='in' ? pw : currentUnit==='cm' ? pw/2.54 : pw/25.4;
+    const hIn = currentUnit==='in' ? ph : currentUnit==='cm' ? ph/2.54 : ph/25.4;
+    const dpiW = iw / wIn, dpiH = ih / hIn;
+    const eff = Math.min(dpiW, dpiH);
+
+    let qTxt='Poor', qClass='quality-poor';
+    if(eff>=300){ qTxt='Excellent (300+ PPI)'; qClass='quality-excellent'; }
+    else if(eff>=240){ qTxt='Very Good (240+ PPI)'; qClass='quality-verygood'; }
+    else if(eff>=180){ qTxt='Good (180+ PPI)'; qClass='quality-good'; }
+    else if(eff>=150){ qTxt='Fair (150+ PPI)'; qClass='quality-fair'; }
+
+    const diagIn = Math.sqrt(wIn*wIn + hIn*hIn);
+    const viewIn = Math.round(diagIn*2);
+    const viewOut = inchesTo(viewIn, currentUnit);
+    const u = unitLabel(currentUnit);
+
+    $('#print-quality-result-content').innerHTML = `
+      <p>Effective Resolution: <strong>$</strong> DPI</p>
+      <p>Print Quality: <span class="$</span></p>
+      <p>Recommended Minimum Viewing Distance: <strong>$</strong> $</p>
+    `;
+    $('#print-quality-result').style.display='block';
+    calculateFileSize(iw, ih);
+  });
+
+  // Print & resets
+  $('#original-print').addEventListener('click', ()=>{
+    if($('#printable-table').innerHTML.trim()===''){ alert('Please calculate results before printing.'); return; }
+    window.print();
+  });
+  $('#original-reset').addEventListener('click', ()=>{
+    $('#original-width').value=''; $('#original-height').value='';
+    $('#aspect-ratio').value='0'; $('#original-quality').value='300';
+    $('#original-result').style.display='none'; $('#sizesTable').style.display='none';
+    $('#aspect-ratio-info').style.display='none'; $('#file-size-result').style.display='none';
+  });
+  $('#reset-pixel-to-physical').addEventListener('click', ()=>{
+    $('#pixel-width').value=''; $('#pixel-height').value=''; $('#dpi').value='300';
+    $('#pixel-to-physical-result').style.display='none'; $('#file-size-result').style.display='none';
+  });
+  $('#reset-physical-to-pixel').addEventListener('click', ()=>{
+    $('#physical-width').value=''; $('#physical-height').value=''; $('#target-dpi').value='300';
+    $('#physical-to-pixel-result').style.display='none'; $('#file-size-result').style.display='none';
+  });
+  $('#reset-print-quality').addEventListener('click', ()=>{
+    $('#image-width').value=''; $('#image-height').value='';
+    $('#print-width').value=''; $('#print-height').value='';
+    $('#print-quality-result').style.display='none'; $('#file-size-result').style.display='none';
+  });
+})();
+</script>
