@@ -410,6 +410,8 @@
             </select>
           </div>
 
+          <div id="physical-aspect-info" class="aspect-ratio-info" style="display:none;"></div>
+
           <div class="button-group">
             <button class="button button-primary" id="calculate-physical-to-pixel">Calculate</button>
             <button class="button button-outline" id="reset-physical-to-pixel">Reset</button>
@@ -857,10 +859,17 @@
     box.style.display='block';
   }
 
-  function renderAspectRatioFinderResult(){
+  function renderAspectRatioFinderResult(opts){
+    const silent = !!(opts && opts.silent);
     const w = parseInt($('#ratio-width').value,10);
     const h = parseInt($('#ratio-height').value,10);
-    if(!w || !h){ alert('Please enter both image width and height.'); return; }
+    if(!w || !h){
+      if(!silent){ alert('Please enter both image width and height.'); }
+      $('#aspect-ratio-result').style.display='none';
+      $('#aspect-ratio-result-content').innerHTML='';
+      $('#aspect-ratio-crop-visual').innerHTML='';
+      return;
+    }
     const d = gcd(w,h);
     const simpleW = Math.round(w/d);
     const simpleH = Math.round(h/d);
@@ -901,9 +910,10 @@
     syncPreviewModeUi();
     showAspectInfo();
     renderClosestAspectInfo('#pixel-aspect-info', $('#pixel-width').value, $('#pixel-height').value);
+    renderClosestAspectInfo('#physical-aspect-info', $('#physical-width').value, $('#physical-height').value);
     renderClosestAspectInfo('#print-image-aspect-info', $('#image-width').value, $('#image-height').value);
     if($('#aspect-ratio-result').style.display !== 'none'){
-      renderAspectRatioFinderResult();
+      renderAspectRatioFinderResult({ silent: true });
     }
   }
 
@@ -935,13 +945,18 @@
   $('#aspect-ratio').addEventListener('change', showAspectInfo);
   $('#pixel-width').addEventListener('input', ()=> renderClosestAspectInfo('#pixel-aspect-info', $('#pixel-width').value, $('#pixel-height').value));
   $('#pixel-height').addEventListener('input', ()=> renderClosestAspectInfo('#pixel-aspect-info', $('#pixel-width').value, $('#pixel-height').value));
+  $('#physical-width').addEventListener('input', ()=> renderClosestAspectInfo('#physical-aspect-info', $('#physical-width').value, $('#physical-height').value));
+  $('#physical-height').addEventListener('input', ()=> renderClosestAspectInfo('#physical-aspect-info', $('#physical-width').value, $('#physical-height').value));
   $('#image-width').addEventListener('input', ()=> renderClosestAspectInfo('#print-image-aspect-info', $('#image-width').value, $('#image-height').value));
   $('#image-height').addEventListener('input', ()=> renderClosestAspectInfo('#print-image-aspect-info', $('#image-width').value, $('#image-height').value));
 
   // Aspect ratio finder
   $('#calculate-aspect-ratio').addEventListener('click', ()=>{
-    renderAspectRatioFinderResult();
+    renderAspectRatioFinderResult({ silent: false });
   });
+  $('#ratio-width').addEventListener('input', ()=> renderAspectRatioFinderResult({ silent: true }));
+  $('#ratio-height').addEventListener('input', ()=> renderAspectRatioFinderResult({ silent: true }));
+  $('#ratio-target-aspect').addEventListener('change', ()=> renderAspectRatioFinderResult({ silent: true }));
   $('#reset-aspect-ratio').addEventListener('click', ()=>{
     $('#ratio-width').value=''; $('#ratio-height').value='';
     $('#ratio-target-aspect').value='auto';
@@ -957,8 +972,11 @@
   function runInitialPreviewHydration(){
     // Run more than once so browser-restored/autofilled values are captured.
     refreshCropVisualsForMode();
+    renderAspectRatioFinderResult({ silent: true });
     globalThis.setTimeout(refreshCropVisualsForMode, 120);
+    globalThis.setTimeout(()=> renderAspectRatioFinderResult({ silent: true }), 120);
     globalThis.setTimeout(refreshCropVisualsForMode, 450);
+    globalThis.setTimeout(()=> renderAspectRatioFinderResult({ silent: true }), 450);
   }
 
   runInitialPreviewHydration();
@@ -1152,6 +1170,7 @@
   $('#reset-physical-to-pixel').addEventListener('click', ()=>{
     $('#physical-width').value=''; $('#physical-height').value=''; $('#target-dpi').value='300';
     $('#physical-to-pixel-result').style.display='none'; $('#file-size-result').style.display='none';
+    $('#physical-aspect-info').style.display='none'; $('#physical-aspect-info').innerHTML='';
   });
   $('#reset-print-quality').addEventListener('click', ()=>{
     $('#image-width').value=''; $('#image-height').value='';
