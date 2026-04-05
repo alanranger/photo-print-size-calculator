@@ -14,11 +14,17 @@
     --bg: var(--sqs-color-background, transparent);
     --bg-soft: var(--sqs-color-background-secondary, #f5f5f5);
     --border: var(--sqs-color-border, #eaeaea);
+    --panel: #ffffff;
+    --panel-alt: #f7f8fa;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --focus-ring: rgba(240, 89, 34, 0.22);
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
     background: var(--bg);
     border-radius: 8px;
+    box-shadow: 0 8px 28px rgba(2, 6, 23, 0.08);
   }
 
   .calculator-header {
@@ -34,54 +40,128 @@
   .tabs { display: flex; flex-direction: column; width: 100%; }
   .tab-list {
     display: flex; flex-wrap: wrap; gap: 6px 0;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-soft); padding: 8px 10px 0; border-radius: 8px 8px 0 0;
+    border: 1px solid var(--border);
+    background: var(--panel-alt); padding: 8px 10px; border-radius: 10px;
     margin-bottom: 14px;
   }
   .tab-trigger {
-    padding: 10px 16px; background: transparent; border: none;
-    border-bottom: 2px solid transparent; cursor: pointer; font-weight: 600;
+    padding: 10px 16px; background: transparent; border: 1px solid transparent;
+    border-radius: 8px; cursor: pointer; font-weight: 700;
     opacity: .8;
   }
-  .tab-trigger:hover { opacity: 1; }
-  .tab-trigger.active { border-bottom-color: var(--accent); opacity: 1; }
+  .tab-trigger:hover { opacity: 1; background: #ffffff; border-color: var(--border); }
+  .tab-trigger.active {
+    opacity: 1;
+    background: var(--accent);
+    color: #fff !important;
+    border-color: var(--accent);
+    box-shadow: 0 4px 14px rgba(240, 89, 34, 0.3);
+  }
+
+  .required-note {
+    margin: 0 0 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    background: var(--panel-alt);
+    font-size: 13px;
+    color: var(--text-muted) !important;
+  }
+  .preview-mode-toggle {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .preview-mode-label {
+    font-weight: 700;
+    color: var(--text-main) !important;
+  }
+  .preview-mode-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border: 1px solid #d7e0ea;
+    border-radius: 999px;
+    background: #f8fafc;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .preview-mode-option input { margin: 0; }
+  .preview-mode-option.is-selected {
+    background: #fff7ed;
+    border-color: #fdba74;
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25);
+  }
+  .crop-needed-emphasis,
+  .crop-needed-emphasis strong {
+    color: #b91c1c !important;
+    font-weight: 700;
+  }
 
   /* Unit selector */
   .unit-selector { display: flex; gap: 10px; margin-bottom: 16px; background: var(--bg-soft);
     padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
   .unit-button {
-    flex: 1; padding: 8px 12px; background: #fff; border: 1px solid var(--border);
+    flex: 1; padding: 10px 12px; background: #fff; border: 1px solid #cfd8e3;
     border-radius: 4px; text-align: center; cursor: pointer; font-weight: 600;
   }
-  .unit-button:hover { background: #fafafa; }
+  .unit-button:hover { background: #fafafa; border-color: #aeb9c8; }
   .unit-button.active { background: var(--accent); color: #fff !important; border-color: var(--accent); }
 
   /* Cards */
-  .card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
-  .card-header { padding: 14px 16px; background: var(--bg-soft); border-bottom: 1px solid var(--border); }
+  .card { border: 1px solid #dbe3ed; border-radius: 10px; overflow: hidden; margin-bottom: 16px; background: var(--panel); }
+  .card-header { padding: 14px 16px; background: #eef2f7; border-bottom: 1px solid #dbe3ed; }
   .card-title { margin: 0; font-weight: 700; }
-  .card-description { margin: 4px 0 0; opacity: .9; }
+  .card-description { margin: 4px 0 0; color: var(--text-muted) !important; opacity: 1; }
   .card-content { padding: 16px; }
 
   /* Forms */
   .form-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
   @media (min-width: 640px) { .form-grid { grid-template-columns: 1fr 1fr; } }
-  .form-group { margin: 0; }
-  .form-label { display: block; margin-bottom: 6px; font-weight: 500; }
-  .form-input, .form-select {
-    width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px;
-    background: #fff;
+  .form-group { margin: 0; background: #fbfcfe; border: 1px solid #e5ebf3; border-radius: 8px; padding: 10px; }
+  .form-label { display: block; margin-bottom: 6px; font-weight: 700; color: var(--text-main) !important; }
+  .required-marker {
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #7c2d12 !important;
+    background: #ffedd5;
+    border: 1px solid #fdba74;
+    border-radius: 999px;
+    padding: 1px 6px;
+    white-space: nowrap;
   }
-  .form-input:focus, .form-select:focus { outline: none; box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 85%); border-color: var(--accent); }
+  .form-input, .form-select {
+    width: 100%; padding: 10px 12px; border: 1px solid #b8c4d6; border-radius: 6px;
+    background: #fff;
+    color: #0f172a !important;
+    font-weight: 600;
+  }
+  .form-input::placeholder { color: #64748b !important; opacity: 1; font-weight: 500; }
+  .form-input:hover, .form-select:hover { border-color: #94a3b8; }
+  .form-input:focus, .form-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    border-color: var(--accent);
+  }
 
   .button-group { display: flex; gap: 10px; flex-wrap: wrap; }
-  .button { flex: 1; min-width: 120px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; font-weight: 600; background: #fff; }
+  .button { flex: 1; min-width: 120px; padding: 10px 14px; border: 1px solid #b8c4d6; border-radius: 6px; cursor: pointer; font-weight: 700; background: #fff; }
   .button-outline { background: transparent; }
   .button-primary { background: var(--accent); color: #fff !important; border-color: var(--accent); }
   .button-primary:hover { filter: brightness(.92); }
+  .button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); border-color: var(--accent); }
 
   /* Results & table */
-  .results { margin-top: 12px; padding: 12px; background: #fafafa; border-left: 3px solid var(--accent); border-radius: 4px; }
+  .results { margin-top: 12px; padding: 12px; background: #f8fafc; border-left: 4px solid var(--accent); border-radius: 6px; border: 1px solid #e2e8f0; }
   .results-title { margin: 0 0 6px; font-weight: 700; }
   .table { width: 100%; border-collapse: collapse; margin-top: 8px; }
   .table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -95,7 +175,44 @@
   .quality-fair { color: #f59e0b !important; font-weight: 700; }
   .quality-poor { color: #ef4444 !important; font-weight: 700; }
 
-  .aspect-ratio-info { margin: 8px 0; padding: 10px; background: var(--bg-soft); border-radius: 6px; border: 1px solid var(--border); }
+  .aspect-ratio-info { margin: 8px 0; padding: 10px; background: #eff6ff; border-radius: 6px; border: 1px solid #bfdbfe; }
+  .crop-visual-wrap {
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+  }
+  .crop-visual-title {
+    margin: 0;
+    font-weight: 700;
+    color: var(--text-main) !important;
+  }
+  .crop-visual-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 8px;
+  }
+  .crop-visual-inline-label {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #b91c1c !important;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .crop-visual-note {
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: var(--text-muted) !important;
+  }
+  .crop-visual {
+    width: 100%;
+    max-width: 420px;
+    display: block;
+  }
 
   /* Print area (hidden) */
   #printable-area { display: none; }
@@ -126,12 +243,26 @@
       <button class="tab-trigger" data-tab="pixel-to-physical">Pixels to Size</button>
       <button class="tab-trigger" data-tab="physical-to-pixel">Size to Pixels</button>
       <button class="tab-trigger" data-tab="print-quality">Print Quality</button>
+      <button class="tab-trigger" data-tab="aspect-ratio-finder">Aspect Ratio Finder</button>
     </div>
 
     <div class="unit-selector">
       <div class="unit-button" data-unit="mm">mm</div>
       <div class="unit-button" data-unit="cm">cm</div>
       <div class="unit-button active" data-unit="in">inches</div>
+    </div>
+
+    <p class="required-note"><strong>Required fields:</strong> Any label marked <span class="required-marker">Required</span> must be completed before calculating.</p>
+    <div class="preview-mode-toggle" aria-label="Crop preview display mode">
+      <span class="preview-mode-label">Crop preview mode:</span>
+      <label class="preview-mode-option" for="crop-preview-accurate">
+        <input id="crop-preview-accurate" type="radio" name="crop-visual-mode" value="accurate">
+        <span>Accurate scale</span>
+      </label>
+      <label class="preview-mode-option" for="crop-preview-enhanced">
+        <input id="crop-preview-enhanced" type="radio" name="crop-visual-mode" value="enhanced" checked>
+        <span>Enhanced visibility</span>
+      </label>
     </div>
 
     <!-- Original Calculator -->
@@ -144,12 +275,12 @@
         <div class="card-content">
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label" for="original-width">Photo Width (pixels)</label>
-              <input class="form-input" id="original-width" type="number" placeholder="e.g., 6000">
+              <label class="form-label" for="original-width">Photo Width (pixels)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="original-width" type="number" placeholder="e.g., 6000" required>
             </div>
             <div class="form-group">
-              <label class="form-label" for="original-height">Photo Height (pixels)</label>
-              <input class="form-input" id="original-height" type="number" placeholder="e.g., 4000">
+              <label class="form-label" for="original-height">Photo Height (pixels)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="original-height" type="number" placeholder="e.g., 4000" required>
             </div>
           </div>
 
@@ -170,8 +301,8 @@
           <div id="aspect-ratio-info" class="aspect-ratio-info" style="display:none;"></div>
 
           <div class="form-group">
-            <label class="form-label" for="original-quality">Desired Print Quality</label>
-            <select class="form-select" id="original-quality">
+            <label class="form-label" for="original-quality">Desired Print Quality<span class="required-marker">Required</span></label>
+            <select class="form-select" id="original-quality" required>
               <option value="300">Excellent (300 PPI)</option>
               <option value="240">Very Good (240 PPI)</option>
               <option value="180">Good (180 PPI)</option>
@@ -214,18 +345,18 @@
         <div class="card-content">
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label" for="pixel-width">Width (pixels)</label>
-              <input class="form-input" id="pixel-width" type="number" placeholder="e.g., 3000">
+              <label class="form-label" for="pixel-width">Width (pixels)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="pixel-width" type="number" placeholder="e.g., 3000" required>
             </div>
             <div class="form-group">
-              <label class="form-label" for="pixel-height">Height (pixels)</label>
-              <input class="form-input" id="pixel-height" type="number" placeholder="e.g., 2000">
+              <label class="form-label" for="pixel-height">Height (pixels)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="pixel-height" type="number" placeholder="e.g., 2000" required>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="dpi">Resolution (DPI/PPI)</label>
-            <select class="form-select" id="dpi">
+            <label class="form-label" for="dpi">Resolution (DPI/PPI)<span class="required-marker">Required</span></label>
+            <select class="form-select" id="dpi" required>
               <option value="72">72 DPI (Web/Screen)</option>
               <option value="150">150 DPI (Fair Print)</option>
               <option value="240">240 DPI (Good Print)</option>
@@ -233,6 +364,8 @@
               <option value="600">600 DPI (Professional Print)</option>
             </select>
           </div>
+
+          <div id="pixel-aspect-info" class="aspect-ratio-info" style="display:none;"></div>
 
           <div class="button-group">
             <button class="button button-primary" id="calculate-pixel-to-physical">Calculate</button>
@@ -257,18 +390,18 @@
         <div class="card-content">
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label" for="physical-width">Width (<span class="unit-label">in</span>)</label>
-              <input class="form-input" id="physical-width" type="number" placeholder="e.g., 10">
+              <label class="form-label" for="physical-width">Width (<span class="unit-label">in</span>)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="physical-width" type="number" placeholder="e.g., 10" required>
             </div>
             <div class="form-group">
-              <label class="form-label" for="physical-height">Height (<span class="unit-label">in</span>)</label>
-              <input class="form-input" id="physical-height" type="number" placeholder="e.g., 8">
+              <label class="form-label" for="physical-height">Height (<span class="unit-label">in</span>)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="physical-height" type="number" placeholder="e.g., 8" required>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="target-dpi">Target Resolution (DPI/PPI)</label>
-            <select class="form-select" id="target-dpi">
+            <label class="form-label" for="target-dpi">Target Resolution (DPI/PPI)<span class="required-marker">Required</span></label>
+            <select class="form-select" id="target-dpi" required>
               <option value="72">72 DPI (Web/Screen)</option>
               <option value="150">150 DPI (Fair Print)</option>
               <option value="240">240 DPI (Good Print)</option>
@@ -300,23 +433,25 @@
         <div class="card-content">
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label" for="image-width">Image Width (pixels)</label>
-              <input class="form-input" id="image-width" type="number" placeholder="e.g., 3000">
+              <label class="form-label" for="image-width">Image Width (pixels)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="image-width" type="number" placeholder="e.g., 3000" required>
             </div>
             <div class="form-group">
-              <label class="form-label" for="image-height">Image Height (pixels)</label>
-              <input class="form-input" id="image-height" type="number" placeholder="e.g., 2000">
+              <label class="form-label" for="image-height">Image Height (pixels)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="image-height" type="number" placeholder="e.g., 2000" required>
             </div>
           </div>
 
+          <div id="print-image-aspect-info" class="aspect-ratio-info" style="display:none;"></div>
+
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label" for="print-width">Print Width (<span class="unit-label">in</span>)</label>
-              <input class="form-input" id="print-width" type="number" placeholder="e.g., 10">
+              <label class="form-label" for="print-width">Print Width (<span class="unit-label">in</span>)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="print-width" type="number" placeholder="e.g., 10" required>
             </div>
             <div class="form-group">
-              <label class="form-label" for="print-height">Print Height (<span class="unit-label">in</span>)</label>
-              <input class="form-input" id="print-height" type="number" placeholder="e.g., 8">
+              <label class="form-label" for="print-height">Print Height (<span class="unit-label">in</span>)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="print-height" type="number" placeholder="e.g., 8" required>
             </div>
           </div>
 
@@ -328,6 +463,56 @@
           <div class="results" id="print-quality-result" style="display:none;">
             <h4 class="results-title">Results:</h4>
             <div id="print-quality-result-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aspect Ratio Finder -->
+    <div class="tab-content" id="aspect-ratio-finder">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Find My Aspect Ratio</h3>
+          <p class="card-description">Enter your image pixel dimensions to get the exact and nearest standard aspect ratio.</p>
+        </div>
+        <div class="card-content">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="ratio-width">Image Width (pixels)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="ratio-width" type="number" placeholder="e.g., 6000" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ratio-height">Image Height (pixels)<span class="required-marker">Required</span></label>
+              <input class="form-input" id="ratio-height" type="number" placeholder="e.g., 4000" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="ratio-target-aspect">Target Aspect Ratio For Crop Preview</label>
+            <select class="form-select" id="ratio-target-aspect">
+              <option value="auto" selected>Closest standard (auto)</option>
+              <option value="1">1:1 (Square)</option>
+              <option value="1.5">3:2 (Standard)</option>
+              <option value="1.3333333333">4:3 (Classic)</option>
+              <option value="1.25">5:4 (Large Format)</option>
+              <option value="1.4">7:5 (Medium Format)</option>
+              <option value="1.7777777778">16:9 (Widescreen)</option>
+              <option value="2">2:1 (Panoramic)</option>
+            </select>
+          </div>
+
+          <div class="button-group">
+            <button class="button button-primary" id="calculate-aspect-ratio">Calculate</button>
+            <button class="button button-outline" id="reset-aspect-ratio">Reset</button>
+          </div>
+
+          <div class="results" id="aspect-ratio-result" style="display:none;">
+            <h4 class="results-title">Aspect Ratio Result:</h4>
+            <div id="aspect-ratio-result-content"></div>
+            <div class="crop-visual-wrap">
+              <div id="aspect-ratio-crop-visual"></div>
+              <p class="crop-visual-note">Dark red = cropped area. Inner border = final image after crop.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -358,7 +543,7 @@
   </div>
 
   <div class="attribution" style="text-align:center; opacity:.8; margin-top:10px;">
-    By Alan Ranger Photography — <a href="https://www.alanranger.com" target="_blank">www.alanranger.com</a>
+    By Alan Ranger Photography — <a href="https://www.alanranger.com" target="_blank" rel="noopener noreferrer">www.alanranger.com</a>
   </div>
 </div>
 
@@ -447,32 +632,338 @@
   }
   updatePlaceholders();
 
+  function findClosestAspectRatio(ratio){
+    const options = Array.from($('#aspect-ratio').options).slice(1);
+    let closest = { name:'Custom', value:ratio, diff:Infinity };
+    options.forEach((o)=>{
+      const v = parseFloat(o.value);
+      const diff = Math.abs(v - ratio);
+      if(diff < closest.diff){
+        closest = { name:o.text, value:v, diff };
+      }
+    });
+    return closest;
+  }
+
+  function getAspectLabelFromValue(value){
+    const option = Array.from($('#ratio-target-aspect').options).find((o)=> o.value === String(value));
+    return option ? option.text : `${round(value)}:1`;
+  }
+
+  function resolveTargetAspect(targetMode, closest){
+    if(targetMode === 'auto'){
+      return { ratio: closest.value, label: `${closest.name} (auto)` };
+    }
+    return { ratio: parseFloat(targetMode), label: getAspectLabelFromValue(targetMode) };
+  }
+
+  function calculateCropData(w, h, targetRatio){
+    const ratio = w / h;
+    let keptW = w;
+    let keptH = h;
+    let cropDirection = 'none';
+    if(Math.abs(ratio - targetRatio) > 0.0005){
+      if(ratio > targetRatio){
+        keptW = Math.round(h * targetRatio);
+        cropDirection = 'width';
+      }else{
+        keptH = Math.round(w / targetRatio);
+        cropDirection = 'height';
+      }
+    }
+    const totalPixels = w * h;
+    const keptPixels = keptW * keptH;
+    const croppedPixels = Math.max(0, totalPixels - keptPixels);
+    const croppedPct = totalPixels ? (croppedPixels / totalPixels) * 100 : 0;
+    const cropEachSideW = Math.max(0, (w - keptW) / 2);
+    const cropEachSideH = Math.max(0, (h - keptH) / 2);
+    return {
+      w, h, keptW, keptH, cropDirection, croppedPixels, croppedPct, cropEachSideW, cropEachSideH
+    };
+  }
+
+  function removedSummaryText(crop){
+    if(crop.croppedPixels === 0){
+      return 'None (already matches target ratio)';
+    }
+    if(crop.cropDirection === 'width'){
+      return `${Math.round(crop.cropEachSideW)} px each side`;
+    }
+    return `${Math.round(crop.cropEachSideH)} px each side`;
+  }
+
+  function removedEdgesLabel(direction){
+    if(direction === 'none') return 'crop edges';
+    if(direction === 'height') return 'top + bottom';
+    return 'left + right';
+  }
+
+  // Keep this helper available for preview header labels.
+  function cropGraphicLabelText(crop){
+    if(!crop) return '';
+    if(crop.cropDirection === 'width'){
+      return `${Math.round(crop.cropEachSideW)}px each side`;
+    }
+    if(crop.cropDirection === 'height'){
+      return `${Math.round(crop.cropEachSideH)}px top/bottom`;
+    }
+    return '';
+  }
+
+  function isEnhancedVisibilityMode(){
+    const selected = document.querySelector('input[name="crop-visual-mode"]:checked');
+    return !selected || selected.value === 'enhanced';
+  }
+
+  function buildCropVisualLayout(crop, enhancedMode){
+    const viewW = 360;
+    const viewH = 220;
+    const scale = Math.min((viewW - 20) / crop.w, (viewH - 20) / crop.h);
+    const drawW = Math.max(1, Math.round(crop.w * scale));
+    const drawH = Math.max(1, Math.round(crop.h * scale));
+    const offsetX = Math.round((viewW - drawW) / 2);
+    const offsetY = Math.round((viewH - drawH) / 2);
+    const keptDrawW = Math.max(1, Math.round(crop.keptW * scale));
+    const keptDrawH = Math.max(1, Math.round(crop.keptH * scale));
+    const keptX = offsetX + Math.round((drawW - keptDrawW) / 2);
+    const keptY = offsetY + Math.round((drawH - keptDrawH) / 2);
+    const leftCrop = Math.max(0, keptX - offsetX);
+    const rightCrop = Math.max(0, (offsetX + drawW) - (keptX + keptDrawW));
+    const topCrop = Math.max(0, keptY - offsetY);
+    const bottomCrop = Math.max(0, (offsetY + drawH) - (keptY + keptDrawH));
+    const minVisualCrop = 6;
+    const smallWidthCrop = enhancedMode && crop.cropDirection === 'width' && (leftCrop < minVisualCrop || rightCrop < minVisualCrop);
+    const smallHeightCrop = enhancedMode && crop.cropDirection === 'height' && (topCrop < minVisualCrop || bottomCrop < minVisualCrop);
+    return {
+      viewW, viewH, drawW, drawH, offsetX, offsetY, keptDrawW, keptDrawH, keptX, keptY,
+      leftCrop, rightCrop, topCrop, bottomCrop, minVisualCrop, smallWidthCrop, smallHeightCrop
+    };
+  }
+
+  function buildWidthOverlays(layout){
+    if(!layout.smallWidthCrop){
+      return `
+        <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.leftCrop}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.72)"></rect>
+        <rect x="${layout.keptX + layout.keptDrawW}" y="${layout.offsetY}" width="${layout.rightCrop}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.72)"></rect>
+        <line x1="${layout.keptX}" y1="${layout.offsetY}" x2="${layout.keptX}" y2="${layout.offsetY + layout.drawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+        <line x1="${layout.keptX + layout.keptDrawW}" y1="${layout.offsetY}" x2="${layout.keptX + layout.keptDrawW}" y2="${layout.offsetY + layout.drawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+      `;
+    }
+    const leftIndicator = Math.max(layout.leftCrop, layout.minVisualCrop);
+    const rightIndicator = Math.max(layout.rightCrop, layout.minVisualCrop);
+    return `
+      <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.leftCrop}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.72)"></rect>
+      <rect x="${layout.keptX + layout.keptDrawW}" y="${layout.offsetY}" width="${layout.rightCrop}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.72)"></rect>
+      <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${leftIndicator}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
+      <rect x="${layout.offsetX + layout.drawW - rightIndicator}" y="${layout.offsetY}" width="${rightIndicator}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
+      <line x1="${layout.keptX}" y1="${layout.offsetY}" x2="${layout.keptX}" y2="${layout.offsetY + layout.drawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+      <line x1="${layout.keptX + layout.keptDrawW}" y1="${layout.offsetY}" x2="${layout.keptX + layout.keptDrawW}" y2="${layout.offsetY + layout.drawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+    `;
+  }
+
+  function buildHeightOverlays(layout){
+    if(!layout.smallHeightCrop){
+      return `
+        <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.drawW}" height="${layout.topCrop}" fill="rgba(127, 29, 29, 0.72)"></rect>
+        <rect x="${layout.offsetX}" y="${layout.keptY + layout.keptDrawH}" width="${layout.drawW}" height="${layout.bottomCrop}" fill="rgba(127, 29, 29, 0.72)"></rect>
+        <line x1="${layout.offsetX}" y1="${layout.keptY}" x2="${layout.offsetX + layout.drawW}" y2="${layout.keptY}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+        <line x1="${layout.offsetX}" y1="${layout.keptY + layout.keptDrawH}" x2="${layout.offsetX + layout.drawW}" y2="${layout.keptY + layout.keptDrawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+      `;
+    }
+    const topIndicator = Math.max(layout.topCrop, layout.minVisualCrop);
+    const bottomIndicator = Math.max(layout.bottomCrop, layout.minVisualCrop);
+    return `
+      <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.drawW}" height="${layout.topCrop}" fill="rgba(127, 29, 29, 0.72)"></rect>
+      <rect x="${layout.offsetX}" y="${layout.keptY + layout.keptDrawH}" width="${layout.drawW}" height="${layout.bottomCrop}" fill="rgba(127, 29, 29, 0.72)"></rect>
+      <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.drawW}" height="${topIndicator}" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
+      <rect x="${layout.offsetX}" y="${layout.offsetY + layout.drawH - bottomIndicator}" width="${layout.drawW}" height="${bottomIndicator}" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
+      <line x1="${layout.offsetX}" y1="${layout.keptY}" x2="${layout.offsetX + layout.drawW}" y2="${layout.keptY}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+      <line x1="${layout.offsetX}" y1="${layout.keptY + layout.keptDrawH}" x2="${layout.offsetX + layout.drawW}" y2="${layout.keptY + layout.keptDrawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+    `;
+  }
+
+  function buildCropVisualSvg(crop, enhancedMode){
+    const layout = buildCropVisualLayout(crop, enhancedMode);
+    let overlays = '';
+
+    if(crop.cropDirection === 'width'){
+      overlays = buildWidthOverlays(layout);
+    }else if(crop.cropDirection === 'height'){
+      overlays = buildHeightOverlays(layout);
+    }
+
+    return `
+      <svg class="crop-visual" viewBox="0 0 ${layout.viewW} ${layout.viewH}" role="img" aria-label="Crop preview visualization">
+        <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.drawW}" height="${layout.drawH}" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"></rect>
+        ${overlays}
+        <rect x="${layout.keptX}" y="${layout.keptY}" width="${layout.keptDrawW}" height="${layout.keptDrawH}" fill="rgba(240, 249, 255, 0.55)" stroke="#0f172a" stroke-width="2"></rect>
+      </svg>
+    `;
+  }
+
+  function shouldShowTinyBoostNote(crop, enhancedMode){
+    if(!enhancedMode) return false;
+    const layout = buildCropVisualLayout(crop, enhancedMode);
+    return layout.smallWidthCrop || layout.smallHeightCrop;
+  }
+
+  function renderClosestAspectInfo(containerSelector, widthValue, heightValue, options){
+    const box = $(containerSelector);
+    if(!box) return;
+    const w = parseFloat(widthValue);
+    const h = parseFloat(heightValue);
+    if(w <= 0 || h <= 0){
+      box.style.display='none';
+      box.innerHTML='';
+      return;
+    }
+    const ratio = w / h;
+    const closest = findClosestAspectRatio(ratio);
+    const hasTargetOverride = !!options && typeof options.targetRatio === 'number' && options.targetRatio > 0;
+    const targetRatio = hasTargetOverride ? options.targetRatio : closest.value;
+    const targetLabel = hasTargetOverride ? options.targetLabel : closest.name;
+    const targetTitle = hasTargetOverride ? 'Selected aspect ratio' : 'Nearest standard ratio';
+    const cropTargetText = hasTargetOverride ? 'selected ratio' : 'nearest ratio';
+    const crop = calculateCropData(w, h, targetRatio);
+    const enhancedMode = isEnhancedVisibilityMode();
+    const tinyBoostNote = shouldShowTinyBoostNote(crop, enhancedMode);
+    const cropGraphicLabel = cropGraphicLabelText(crop);
+    const removedSummary = removedSummaryText(crop);
+    const removedFromLabel = removedEdgesLabel(crop.cropDirection);
+    const cropNeededClass = crop.croppedPixels > 0 ? 'crop-needed-emphasis' : '';
+
+    const useIntegerRatio = Number.isInteger(w) && Number.isInteger(h);
+    let exactRatioText = `${round(ratio)}:1`;
+    if(useIntegerRatio){
+      const d = gcd(w, h);
+      exactRatioText = `${Math.round(w/d)}:${Math.round(h/d)} (${round(ratio)}:1)`;
+    }
+
+    box.innerHTML = `
+      <p>Your image's aspect ratio: <strong>${exactRatioText}</strong></p>
+      <p>Nearest standard ratio: <strong>${closest.name}</strong></p>
+      ${hasTargetOverride ? `<p>${targetTitle}: <strong>${targetLabel}</strong></p>` : ''}
+      <p class="${cropNeededClass}">Crop needed to match ${cropTargetText}: <strong>${crop.croppedPixels.toLocaleString()} pixels (${round(crop.croppedPct)}%)</strong></p>
+      <p>Removed from ${removedFromLabel}: <strong>${removedSummary}</strong></p>
+      <div class="crop-visual-wrap">
+        <div class="crop-visual-head">
+          <p class="crop-visual-title">Crop Preview</p>
+          ${cropGraphicLabel ? `<p class="crop-visual-inline-label">${cropGraphicLabel}</p>` : ''}
+        </div>
+        ${buildCropVisualSvg(crop, enhancedMode)}
+        ${tinyBoostNote ? '<p class="crop-visual-note">Tiny crop highlight is visually boosted for clarity.</p>' : ''}
+      </div>
+    `;
+    box.style.display='block';
+  }
+
+  function renderAspectRatioFinderResult(){
+    const w = parseInt($('#ratio-width').value,10);
+    const h = parseInt($('#ratio-height').value,10);
+    if(!w || !h){ alert('Please enter both image width and height.'); return; }
+    const d = gcd(w,h);
+    const simpleW = Math.round(w/d);
+    const simpleH = Math.round(h/d);
+    const ratio = w/h;
+    const closest = findClosestAspectRatio(ratio);
+    const targetMode = $('#ratio-target-aspect').value;
+    const target = resolveTargetAspect(targetMode, closest);
+    const crop = calculateCropData(w, h, target.ratio);
+    const enhancedMode = isEnhancedVisibilityMode();
+    const tinyBoostNote = shouldShowTinyBoostNote(crop, enhancedMode);
+    const cropGraphicLabel = cropGraphicLabelText(crop);
+    const removedSummary = removedSummaryText(crop);
+    const removedFromLabel = removedEdgesLabel(crop.cropDirection);
+    const cropNeededClass = crop.croppedPixels > 0 ? 'crop-needed-emphasis' : '';
+
+    $('#aspect-ratio-result-content').innerHTML = `
+      <p>Entered dimensions: <strong>${w.toLocaleString()} x ${h.toLocaleString()} px</strong></p>
+      <p>Exact aspect ratio: <strong>${simpleW}:${simpleH}</strong></p>
+      <p>Decimal ratio: <strong>${round(ratio)}:1</strong></p>
+      <p>Closest standard ratio: <strong>${closest.name}</strong></p>
+      <p>Crop preview target: <strong>${target.label}</strong></p>
+      <p class="${cropNeededClass}">Crop needed: <strong>${crop.croppedPixels.toLocaleString()} pixels (${round(crop.croppedPct)}%)</strong></p>
+      <p>Final crop size: <strong>${crop.keptW.toLocaleString()} x ${crop.keptH.toLocaleString()} px</strong></p>
+      <p>Removed from ${removedFromLabel}: <strong>${removedSummary}</strong></p>
+    `;
+    $('#aspect-ratio-crop-visual').innerHTML = `
+      <div class="crop-visual-head">
+        <p class="crop-visual-title">Crop Preview</p>
+        ${cropGraphicLabel ? `<p class="crop-visual-inline-label">${cropGraphicLabel}</p>` : ''}
+      </div>
+      ${buildCropVisualSvg(crop, enhancedMode)}
+      ${tinyBoostNote ? '<p class="crop-visual-note">Tiny crop highlight is visually boosted for clarity.</p>' : ''}
+    `;
+    $('#aspect-ratio-result').style.display='block';
+  }
+
+  function refreshCropVisualsForMode(){
+    syncPreviewModeUi();
+    showAspectInfo();
+    renderClosestAspectInfo('#pixel-aspect-info', $('#pixel-width').value, $('#pixel-height').value);
+    renderClosestAspectInfo('#print-image-aspect-info', $('#image-width').value, $('#image-height').value);
+    if($('#aspect-ratio-result').style.display !== 'none'){
+      renderAspectRatioFinderResult();
+    }
+  }
+
+  function syncPreviewModeUi(){
+    $$('.preview-mode-option').forEach((label)=>{
+      const input = label.querySelector('input[name="crop-visual-mode"]');
+      if(!input) return;
+      label.classList.toggle('is-selected', !!input.checked);
+    });
+  }
+
   // Aspect info
   function showAspectInfo(){
     const w = parseInt($('#original-width').value,10);
     const h = parseInt($('#original-height').value,10);
+    const selectedRatio = parseFloat($('#aspect-ratio').value);
+    const selectedLabel = $('#aspect-ratio').options[$('#aspect-ratio').selectedIndex].text;
+    const options = (selectedRatio && selectedRatio > 0)
+      ? { targetRatio: selectedRatio, targetLabel: selectedLabel }
+      : undefined;
+    renderClosestAspectInfo('#aspect-ratio-info', w, h, options);
     const box = $('#aspect-ratio-info');
-    if(!w || !h){ box.style.display='none'; box.innerHTML=''; return; }
-    const d = gcd(w,h);
-    const simpleW = Math.round(w/d), simpleH = Math.round(h/d);
-    const ratio = (w/h);
-    const select = $('#aspect-ratio');
-    let closest = { name:'Original', value:ratio, diff:Infinity };
-    Array.from(select.options).forEach((o,idx)=>{
-      if(idx===0) return;
-      const v = parseFloat(o.value);
-      const diff = Math.abs(v - ratio);
-      if(diff < closest.diff){ closest = { name:o.text, value:v, diff }; }
-    });
-    box.innerHTML = `
-      <p>Your image’s aspect ratio: <strong>$</strong> ($:1)</p>
-      <p>Nearest standard ratio: <strong>$</strong></p>
-      <p style="margin:0">Tip: Keep “Original” to preserve your ratio, or pick a preset to preview cropping.</p>
-    `;
-    box.style.display='block';
+    if(box && box.style.display !== 'none'){
+      box.innerHTML += `<p style="margin-top:8px; margin-bottom:0;">Tip: Keep "Original" to preserve your ratio, or pick a preset to preview cropping.</p>`;
+    }
   }
   $('#original-width').addEventListener('input', showAspectInfo);
   $('#original-height').addEventListener('input', showAspectInfo);
+  $('#aspect-ratio').addEventListener('change', showAspectInfo);
+  $('#pixel-width').addEventListener('input', ()=> renderClosestAspectInfo('#pixel-aspect-info', $('#pixel-width').value, $('#pixel-height').value));
+  $('#pixel-height').addEventListener('input', ()=> renderClosestAspectInfo('#pixel-aspect-info', $('#pixel-width').value, $('#pixel-height').value));
+  $('#image-width').addEventListener('input', ()=> renderClosestAspectInfo('#print-image-aspect-info', $('#image-width').value, $('#image-height').value));
+  $('#image-height').addEventListener('input', ()=> renderClosestAspectInfo('#print-image-aspect-info', $('#image-width').value, $('#image-height').value));
+
+  // Aspect ratio finder
+  $('#calculate-aspect-ratio').addEventListener('click', ()=>{
+    renderAspectRatioFinderResult();
+  });
+  $('#reset-aspect-ratio').addEventListener('click', ()=>{
+    $('#ratio-width').value=''; $('#ratio-height').value='';
+    $('#ratio-target-aspect').value='auto';
+    $('#aspect-ratio-result').style.display='none';
+    $('#aspect-ratio-result-content').innerHTML='';
+    $('#aspect-ratio-crop-visual').innerHTML='';
+  });
+  $$('input[name="crop-visual-mode"]').forEach((input)=>{
+    input.addEventListener('change', refreshCropVisualsForMode);
+  });
+  syncPreviewModeUi();
+
+  function runInitialPreviewHydration(){
+    // Run more than once so browser-restored/autofilled values are captured.
+    refreshCropVisualsForMode();
+    globalThis.setTimeout(refreshCropVisualsForMode, 120);
+    globalThis.setTimeout(refreshCropVisualsForMode, 450);
+  }
+
+  runInitialPreviewHydration();
+  globalThis.addEventListener('load', runInitialPreviewHydration);
+  globalThis.addEventListener('pageshow', runInitialPreviewHydration);
 
   // Original calculator
   function calculateOriginal(){
@@ -494,10 +985,10 @@
 
     $('#original-result').innerHTML = `
       <h4 class="results-title">Results</h4>
-      <p>Original: <strong>$</strong> × <strong>$</strong> px</p>
-      <p>Converted (after aspect): <strong>$</strong> × <strong>$</strong> px</p>
-      <p>Megapixels: <strong>$ MP</strong></p>
-      <p>Max print @ $ PPI: <strong>$″ × $″</strong></p>
+      <p>Original: <strong>${w}</strong> x <strong>${h}</strong> px</p>
+      <p>Converted (after aspect): <strong>${cw}</strong> x <strong>${ch}</strong> px</p>
+      <p>Megapixels: <strong>${mp} MP</strong></p>
+      <p>Max print @ ${ppi} PPI: <strong>${round(maxW_in)}" x ${round(maxH_in)}"</strong></p>
     `;
     $('#original-result').style.display='block';
 
@@ -513,9 +1004,9 @@
     PRINT_SIZES.forEach(cat=>{
       const trHeader = document.createElement('tr');
       trHeader.className = 'category-header';
-      trHeader.innerHTML = `<td colspan="6">$</td>`;
+      trHeader.innerHTML = `<td colspan="6">${cat.category}</td>`;
       tbody.appendChild(trHeader);
-      printableHTML += `<tr class="category-header"><td colspan="6">$</td></tr>`;
+      printableHTML += `<tr class="category-header"><td colspan="6">${cat.category}</td></tr>`;
 
       cat.sizes.forEach(s=>{
         const reqMP = ((s.w*s.h*ppi*ppi)/1e6).toFixed(2);
@@ -528,23 +1019,27 @@
         const dIn = Math.sqrt(s.w*s.w + s.h*s.h);
         const view = Math.round(dIn*2);
         const g = gcd(s.w, s.h);
-        const arLabel = `$`;
+        const arLabel = `${s.w/g}:${s.h/g}`;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>$</td>
-          <td>$″ × $″</td>
-          <td>$</td>
-          <td>$ MP</td>
-          <td>$″ min</td>
-          <td><span class="$</span></td>
+          <td>${s.name}</td>
+          <td>${s.w}" x ${s.h}"</td>
+          <td>${arLabel}</td>
+          <td>${reqMP} MP</td>
+          <td>${view}" min</td>
+          <td><span class="${qClass}">${qTxt}</span></td>
         `;
         tbody.appendChild(tr);
 
         printableHTML += `
           <tr>
-            <td>$″ × $</td>
-            <td>$ MP</td><td>$″ min</td><td>$</td>
+            <td>${s.name}</td>
+            <td>${s.w}" x ${s.h}"</td>
+            <td>${arLabel}</td>
+            <td>${reqMP} MP</td>
+            <td>${view}" min</td>
+            <td>${qTxt}</td>
           </tr>
         `;
       });
@@ -563,10 +1058,10 @@
     const bits = pxW*pxH*depth;
     const bytes = bits/8, kb = bytes/1024, mb = kb/1024;
     $('#file-size-table').innerHTML = `
-      <tr><td>Bits</td><td>$</td></tr>
-      <tr><td>Bytes</td><td>$</td></tr>
-      <tr><td>Kilobytes (KB)</td><td>$</td></tr>
-      <tr><td>Megabytes (MB)</td><td>$</td></tr>
+      <tr><td>Bits</td><td>${bits.toLocaleString()}</td></tr>
+      <tr><td>Bytes</td><td>${Math.round(bytes).toLocaleString()}</td></tr>
+      <tr><td>Kilobytes (KB)</td><td>${round(kb)}</td></tr>
+      <tr><td>Megabytes (MB)</td><td>${round(mb)}</td></tr>
     `;
     $('#file-size-result').style.display='block';
   }
@@ -581,8 +1076,8 @@
     const wOut = inchesTo(wIn, currentUnit), hOut = inchesTo(hIn, currentUnit);
     const mp = (pw*ph/1e6).toFixed(2);
     $('#pixel-to-physical-result-content').innerHTML = `
-      <p>Physical Size: <strong>$ × $ $</strong></p>
-      <p>Megapixels: <strong>$ MP</strong></p>
+      <p>Physical Size: <strong>${round(wOut)} x ${round(hOut)} ${unitLabel(currentUnit)}</strong></p>
+      <p>Megapixels: <strong>${mp} MP</strong></p>
     `;
     $('#pixel-to-physical-result').style.display='block';
     calculateFileSize(pw, ph);
@@ -599,8 +1094,8 @@
     const pxW = Math.round(wIn*dpi), pxH = Math.round(hIn*dpi);
     const mp = (pxW*pxH/1e6).toFixed(2);
     $('#physical-to-pixel-result-content').innerHTML = `
-      <p>Required Resolution: <strong>$ × $ pixels</strong></p>
-      <p>Megapixels: <strong>$ MP</strong></p>
+      <p>Required Resolution: <strong>${pxW.toLocaleString()} x ${pxH.toLocaleString()} pixels</strong></p>
+      <p>Megapixels: <strong>${mp} MP</strong></p>
     `;
     $('#physical-to-pixel-result').style.display='block';
     calculateFileSize(pxW, pxH);
@@ -630,9 +1125,9 @@
     const u = unitLabel(currentUnit);
 
     $('#print-quality-result-content').innerHTML = `
-      <p>Effective Resolution: <strong>$</strong> DPI</p>
-      <p>Print Quality: <span class="$</span></p>
-      <p>Recommended Minimum Viewing Distance: <strong>$</strong> $</p>
+      <p>Effective Resolution: <strong>${round(eff)}</strong> DPI</p>
+      <p>Print Quality: <span class="${qClass}">${qTxt}</span></p>
+      <p>Recommended Minimum Viewing Distance: <strong>${round(viewOut)}</strong> ${u}</p>
     `;
     $('#print-quality-result').style.display='block';
     calculateFileSize(iw, ih);
@@ -652,6 +1147,7 @@
   $('#reset-pixel-to-physical').addEventListener('click', ()=>{
     $('#pixel-width').value=''; $('#pixel-height').value=''; $('#dpi').value='300';
     $('#pixel-to-physical-result').style.display='none'; $('#file-size-result').style.display='none';
+    $('#pixel-aspect-info').style.display='none'; $('#pixel-aspect-info').innerHTML='';
   });
   $('#reset-physical-to-pixel').addEventListener('click', ()=>{
     $('#physical-width').value=''; $('#physical-height').value=''; $('#target-dpi').value='300';
@@ -661,6 +1157,7 @@
     $('#image-width').value=''; $('#image-height').value='';
     $('#print-width').value=''; $('#print-height').value='';
     $('#print-quality-result').style.display='none'; $('#file-size-result').style.display='none';
+    $('#print-image-aspect-info').style.display='none'; $('#print-image-aspect-info').innerHTML='';
   });
 })();
 </script>
