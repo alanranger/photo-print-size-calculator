@@ -557,7 +557,7 @@
 </div>
 
 <script>
-(function(){
+(function () {
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => Array.from(document.querySelectorAll(s));
   const gcd = (a,b)=> b===0 ? a : gcd(b, a % b);
@@ -593,12 +593,12 @@
   let currentUnit = 'in';
 
   // Tabs
-  $$('.tab-trigger').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
+  $$('.tab-trigger').forEach(btn=> {
+    btn.addEventListener('click', ()=> {
       const id = btn.dataset.tab;
       $$('.tab-trigger').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      $$('.tab-content').forEach(c=>{
+      $$('.tab-content').forEach(c=> {
         c.classList.remove('active');
         if(c.id===id) c.classList.add('active');
       });
@@ -606,8 +606,8 @@
   });
 
   // Units
-  $$('.unit-button').forEach(b=>{
-    b.addEventListener('click', ()=>{
+  $$('.unit-button').forEach(b=> {
+    b.addEventListener('click', ()=> {
       const unit = b.dataset.unit;
       $$('.unit-button').forEach(x=>x.classList.remove('active'));
       b.classList.add('active');
@@ -617,58 +617,58 @@
     });
   });
 
-  function updatePlaceholders(){
+  function updatePlaceholders() {
     const pw = $('#physical-width'), ph = $('#physical-height');
     const rw = $('#print-width'), rh = $('#print-height');
     if(!pw || !ph || !rw || !rh) return;
-    if(currentUnit==='in'){
+    if(currentUnit==='in') {
       pw.placeholder = rw.placeholder = 'e.g., 10';
       ph.placeholder = rh.placeholder = 'e.g., 8';
-    }else if(currentUnit==='cm'){
+    }else if(currentUnit==='cm') {
       pw.placeholder = rw.placeholder = 'e.g., 25.4';
       ph.placeholder = rh.placeholder = 'e.g., 20.32';
-    }else{
+    }else {
       pw.placeholder = rw.placeholder = 'e.g., 254';
       ph.placeholder = rh.placeholder = 'e.g., 203.2';
     }
   }
   updatePlaceholders();
 
-  function findClosestAspectRatio(ratio){
+  function findClosestAspectRatio(ratio) {
     const options = Array.from($('#aspect-ratio').options).slice(1);
     let closest = { name:'Custom', value:ratio, diff:Infinity };
-    options.forEach((o)=>{
+    options.forEach((o)=> {
       const v = parseFloat(o.value);
       const diff = Math.abs(v - ratio);
-      if(diff < closest.diff){
+      if(diff < closest.diff) {
         closest = { name:o.text, value:v, diff };
       }
     });
     return closest;
   }
 
-  function getAspectLabelFromValue(value){
+  function getAspectLabelFromValue(value) {
     const option = Array.from($('#ratio-target-aspect').options).find((o)=> o.value === String(value));
-    return option ? option.text : `${round(value)}:1`;
+    return option ? option.text : `${ round(value) }:1`;
   }
 
-  function resolveTargetAspect(targetMode, closest){
-    if(targetMode === 'auto'){
-      return { ratio: closest.value, label: `${closest.name} (auto)` };
+  function resolveTargetAspect(targetMode, closest) {
+    if(targetMode === 'auto') {
+      return { ratio: closest.value, label: `${ closest.name } (auto)` };
     }
     return { ratio: parseFloat(targetMode), label: getAspectLabelFromValue(targetMode) };
   }
 
-  function calculateCropData(w, h, targetRatio){
+  function calculateCropData(w, h, targetRatio) {
     const ratio = w / h;
     let keptW = w;
     let keptH = h;
     let cropDirection = 'none';
-    if(Math.abs(ratio - targetRatio) > 0.0005){
-      if(ratio > targetRatio){
+    if(Math.abs(ratio - targetRatio) > 0.0005) {
+      if(ratio > targetRatio) {
         keptW = Math.round(h * targetRatio);
         cropDirection = 'width';
-      }else{
+      }else {
         keptH = Math.round(w / targetRatio);
         cropDirection = 'height';
       }
@@ -684,40 +684,40 @@
     };
   }
 
-  function removedSummaryText(crop){
-    if(crop.croppedPixels === 0){
+  function removedSummaryText(crop) {
+    if(crop.croppedPixels === 0) {
       return 'None (already matches target ratio)';
     }
-    if(crop.cropDirection === 'width'){
-      return `${Math.round(crop.cropEachSideW)} px each side`;
+    if(crop.cropDirection === 'width') {
+      return `${ Math.round(crop.cropEachSideW) } px each side`;
     }
-    return `${Math.round(crop.cropEachSideH)} px each side`;
+    return `${ Math.round(crop.cropEachSideH) } px each side`;
   }
 
-  function removedEdgesLabel(direction){
+  function removedEdgesLabel(direction) {
     if(direction === 'none') return 'crop edges';
     if(direction === 'height') return 'top + bottom';
     return 'left + right';
   }
 
   // Keep this helper available for preview header labels.
-  function cropGraphicLabelText(crop){
+  function cropGraphicLabelText(crop) {
     if(!crop) return '';
-    if(crop.cropDirection === 'width'){
-      return `${Math.round(crop.cropEachSideW)}px each side`;
+    if(crop.cropDirection === 'width') {
+      return `${ Math.round(crop.cropEachSideW) }px each side`;
     }
-    if(crop.cropDirection === 'height'){
-      return `${Math.round(crop.cropEachSideH)}px top/bottom`;
+    if(crop.cropDirection === 'height') {
+      return `${ Math.round(crop.cropEachSideH) }px top/bottom`;
     }
     return '';
   }
 
-  function isEnhancedVisibilityMode(){
+  function isEnhancedVisibilityMode() {
     const selected = document.querySelector('input[name="crop-visual-mode"]:checked');
     return !selected || selected.value === 'enhanced';
   }
 
-  function buildCropVisualLayout(crop, enhancedMode){
+  function buildCropVisualLayout(crop, enhancedMode) {
     const viewW = 360;
     const viewH = 220;
     const scale = Math.min((viewW - 20) / crop.w, (viewH - 20) / crop.h);
@@ -742,79 +742,79 @@
     };
   }
 
-  function buildWidthOverlays(layout){
-    if(!layout.smallWidthCrop){
+  function buildWidthOverlays(layout) {
+    if(!layout.smallWidthCrop) {
       return `
-        <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.leftCrop}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.72)"></rect>
-        <rect x="${layout.keptX + layout.keptDrawW}" y="${layout.offsetY}" width="${layout.rightCrop}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.72)"></rect>
-        <line x1="${layout.keptX}" y1="${layout.offsetY}" x2="${layout.keptX}" y2="${layout.offsetY + layout.drawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
-        <line x1="${layout.keptX + layout.keptDrawW}" y1="${layout.offsetY}" x2="${layout.keptX + layout.keptDrawW}" y2="${layout.offsetY + layout.drawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+        <rect x="${ layout.offsetX }" y="${ layout.offsetY }" width="${ layout.leftCrop }" height="${ layout.drawH }" fill="rgba(127, 29, 29, 0.72)"></rect>
+        <rect x="${ layout.keptX + layout.keptDrawW }" y="${ layout.offsetY }" width="${ layout.rightCrop }" height="${ layout.drawH }" fill="rgba(127, 29, 29, 0.72)"></rect>
+        <line x1="${ layout.keptX }" y1="${ layout.offsetY }" x2="${ layout.keptX }" y2="${ layout.offsetY + layout.drawH }" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+        <line x1="${ layout.keptX + layout.keptDrawW }" y1="${ layout.offsetY }" x2="${ layout.keptX + layout.keptDrawW }" y2="${ layout.offsetY + layout.drawH }" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
       `;
     }
     const leftIndicator = Math.max(layout.leftCrop, layout.minVisualCrop);
     const rightIndicator = Math.max(layout.rightCrop, layout.minVisualCrop);
     return `
-      <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.leftCrop}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.72)"></rect>
-      <rect x="${layout.keptX + layout.keptDrawW}" y="${layout.offsetY}" width="${layout.rightCrop}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.72)"></rect>
-      <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${leftIndicator}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
-      <rect x="${layout.offsetX + layout.drawW - rightIndicator}" y="${layout.offsetY}" width="${rightIndicator}" height="${layout.drawH}" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
-      <line x1="${layout.keptX}" y1="${layout.offsetY}" x2="${layout.keptX}" y2="${layout.offsetY + layout.drawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
-      <line x1="${layout.keptX + layout.keptDrawW}" y1="${layout.offsetY}" x2="${layout.keptX + layout.keptDrawW}" y2="${layout.offsetY + layout.drawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+      <rect x="${ layout.offsetX }" y="${ layout.offsetY }" width="${ layout.leftCrop }" height="${ layout.drawH }" fill="rgba(127, 29, 29, 0.72)"></rect>
+      <rect x="${ layout.keptX + layout.keptDrawW }" y="${ layout.offsetY }" width="${ layout.rightCrop }" height="${ layout.drawH }" fill="rgba(127, 29, 29, 0.72)"></rect>
+      <rect x="${ layout.offsetX }" y="${ layout.offsetY }" width="${ leftIndicator }" height="${ layout.drawH }" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
+      <rect x="${ layout.offsetX + layout.drawW - rightIndicator }" y="${ layout.offsetY }" width="${ rightIndicator }" height="${ layout.drawH }" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
+      <line x1="${ layout.keptX }" y1="${ layout.offsetY }" x2="${ layout.keptX }" y2="${ layout.offsetY + layout.drawH }" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+      <line x1="${ layout.keptX + layout.keptDrawW }" y1="${ layout.offsetY }" x2="${ layout.keptX + layout.keptDrawW }" y2="${ layout.offsetY + layout.drawH }" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
     `;
   }
 
-  function buildHeightOverlays(layout){
-    if(!layout.smallHeightCrop){
+  function buildHeightOverlays(layout) {
+    if(!layout.smallHeightCrop) {
       return `
-        <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.drawW}" height="${layout.topCrop}" fill="rgba(127, 29, 29, 0.72)"></rect>
-        <rect x="${layout.offsetX}" y="${layout.keptY + layout.keptDrawH}" width="${layout.drawW}" height="${layout.bottomCrop}" fill="rgba(127, 29, 29, 0.72)"></rect>
-        <line x1="${layout.offsetX}" y1="${layout.keptY}" x2="${layout.offsetX + layout.drawW}" y2="${layout.keptY}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
-        <line x1="${layout.offsetX}" y1="${layout.keptY + layout.keptDrawH}" x2="${layout.offsetX + layout.drawW}" y2="${layout.keptY + layout.keptDrawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+        <rect x="${ layout.offsetX }" y="${ layout.offsetY }" width="${ layout.drawW }" height="${ layout.topCrop }" fill="rgba(127, 29, 29, 0.72)"></rect>
+        <rect x="${ layout.offsetX }" y="${ layout.keptY + layout.keptDrawH }" width="${ layout.drawW }" height="${ layout.bottomCrop }" fill="rgba(127, 29, 29, 0.72)"></rect>
+        <line x1="${ layout.offsetX }" y1="${ layout.keptY }" x2="${ layout.offsetX + layout.drawW }" y2="${ layout.keptY }" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+        <line x1="${ layout.offsetX }" y1="${ layout.keptY + layout.keptDrawH }" x2="${ layout.offsetX + layout.drawW }" y2="${ layout.keptY + layout.keptDrawH }" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
       `;
     }
     const topIndicator = Math.max(layout.topCrop, layout.minVisualCrop);
     const bottomIndicator = Math.max(layout.bottomCrop, layout.minVisualCrop);
     return `
-      <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.drawW}" height="${layout.topCrop}" fill="rgba(127, 29, 29, 0.72)"></rect>
-      <rect x="${layout.offsetX}" y="${layout.keptY + layout.keptDrawH}" width="${layout.drawW}" height="${layout.bottomCrop}" fill="rgba(127, 29, 29, 0.72)"></rect>
-      <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.drawW}" height="${topIndicator}" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
-      <rect x="${layout.offsetX}" y="${layout.offsetY + layout.drawH - bottomIndicator}" width="${layout.drawW}" height="${bottomIndicator}" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
-      <line x1="${layout.offsetX}" y1="${layout.keptY}" x2="${layout.offsetX + layout.drawW}" y2="${layout.keptY}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
-      <line x1="${layout.offsetX}" y1="${layout.keptY + layout.keptDrawH}" x2="${layout.offsetX + layout.drawW}" y2="${layout.keptY + layout.keptDrawH}" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+      <rect x="${ layout.offsetX }" y="${ layout.offsetY }" width="${ layout.drawW }" height="${ layout.topCrop }" fill="rgba(127, 29, 29, 0.72)"></rect>
+      <rect x="${ layout.offsetX }" y="${ layout.keptY + layout.keptDrawH }" width="${ layout.drawW }" height="${ layout.bottomCrop }" fill="rgba(127, 29, 29, 0.72)"></rect>
+      <rect x="${ layout.offsetX }" y="${ layout.offsetY }" width="${ layout.drawW }" height="${ topIndicator }" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
+      <rect x="${ layout.offsetX }" y="${ layout.offsetY + layout.drawH - bottomIndicator }" width="${ layout.drawW }" height="${ bottomIndicator }" fill="rgba(127, 29, 29, 0.5)" stroke="rgba(69,10,10,0.96)" stroke-dasharray="3 2"></rect>
+      <line x1="${ layout.offsetX }" y1="${ layout.keptY }" x2="${ layout.offsetX + layout.drawW }" y2="${ layout.keptY }" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
+      <line x1="${ layout.offsetX }" y1="${ layout.keptY + layout.keptDrawH }" x2="${ layout.offsetX + layout.drawW }" y2="${ layout.keptY + layout.keptDrawH }" stroke="rgba(69,10,10,0.96)" stroke-width="2"></line>
     `;
   }
 
-  function buildCropVisualSvg(crop, enhancedMode){
+  function buildCropVisualSvg(crop, enhancedMode) {
     const layout = buildCropVisualLayout(crop, enhancedMode);
     let overlays = '';
 
-    if(crop.cropDirection === 'width'){
+    if(crop.cropDirection === 'width') {
       overlays = buildWidthOverlays(layout);
-    }else if(crop.cropDirection === 'height'){
+    }else if(crop.cropDirection === 'height') {
       overlays = buildHeightOverlays(layout);
     }
 
     return `
-      <svg class="crop-visual" viewBox="0 0 ${layout.viewW} ${layout.viewH}" role="img" aria-label="Crop preview visualization">
-        <rect x="${layout.offsetX}" y="${layout.offsetY}" width="${layout.drawW}" height="${layout.drawH}" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"></rect>
-        ${overlays}
-        <rect x="${layout.keptX}" y="${layout.keptY}" width="${layout.keptDrawW}" height="${layout.keptDrawH}" fill="rgba(240, 249, 255, 0.55)" stroke="#0f172a" stroke-width="2"></rect>
+      <svg class="crop-visual" viewBox="0 0 ${ layout.viewW } ${ layout.viewH }" role="img" aria-label="Crop preview visualization">
+        <rect x="${ layout.offsetX }" y="${ layout.offsetY }" width="${ layout.drawW }" height="${ layout.drawH }" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"></rect>
+        ${ overlays }
+        <rect x="${ layout.keptX }" y="${ layout.keptY }" width="${ layout.keptDrawW }" height="${ layout.keptDrawH }" fill="rgba(240, 249, 255, 0.55)" stroke="#0f172a" stroke-width="2"></rect>
       </svg>
     `;
   }
 
-  function shouldShowTinyBoostNote(crop, enhancedMode){
+  function shouldShowTinyBoostNote(crop, enhancedMode) {
     if(!enhancedMode) return false;
     const layout = buildCropVisualLayout(crop, enhancedMode);
     return layout.smallWidthCrop || layout.smallHeightCrop;
   }
 
-  function renderClosestAspectInfo(containerSelector, widthValue, heightValue, options){
+  function renderClosestAspectInfo(containerSelector, widthValue, heightValue, options) {
     const box = $(containerSelector);
     if(!box) return;
     const w = parseFloat(widthValue);
     const h = parseFloat(heightValue);
-    if(w <= 0 || h <= 0){
+    if(w <= 0 || h <= 0) {
       box.style.display='none';
       box.innerHTML='';
       return;
@@ -835,36 +835,36 @@
     const cropNeededClass = crop.croppedPixels > 0 ? 'crop-needed-emphasis' : '';
 
     const useIntegerRatio = Number.isInteger(w) && Number.isInteger(h);
-    let exactRatioText = `${round(ratio)}:1`;
-    if(useIntegerRatio){
+    let exactRatioText = `${ round(ratio) }:1`;
+    if(useIntegerRatio) {
       const d = gcd(w, h);
-      exactRatioText = `${Math.round(w/d)}:${Math.round(h/d)} (${round(ratio)}:1)`;
+      exactRatioText = `${ Math.round(w/d) }:${ Math.round(h/d) } (${ round(ratio) }:1)`;
     }
 
     box.innerHTML = `
-      <p>Your image's aspect ratio: <strong>${exactRatioText}</strong></p>
-      <p>Nearest standard ratio: <strong>${closest.name}</strong></p>
-      ${hasTargetOverride ? `<p>${targetTitle}: <strong>${targetLabel}</strong></p>` : ''}
-      <p class="${cropNeededClass}">Crop needed to match ${cropTargetText}: <strong>${crop.croppedPixels.toLocaleString()} pixels (${round(crop.croppedPct)}%)</strong></p>
-      <p>Removed from ${removedFromLabel}: <strong>${removedSummary}</strong></p>
+      <p>Your image's aspect ratio: <strong>${ exactRatioText }</strong></p>
+      <p>Nearest standard ratio: <strong>${ closest.name }</strong></p>
+      ${ hasTargetOverride ? `<p>${ targetTitle }: <strong>${ targetLabel }</strong></p>` : ''}
+      <p class="${ cropNeededClass }">Crop needed to match ${ cropTargetText }: <strong>${ crop.croppedPixels.toLocaleString() } pixels (${ round(crop.croppedPct) }%)</strong></p>
+      <p>Removed from ${ removedFromLabel }: <strong>${ removedSummary }</strong></p>
       <div class="crop-visual-wrap">
         <div class="crop-visual-head">
           <p class="crop-visual-title">Crop Preview</p>
-          ${cropGraphicLabel ? `<p class="crop-visual-inline-label">${cropGraphicLabel}</p>` : ''}
+          ${ cropGraphicLabel ? `<p class="crop-visual-inline-label">${ cropGraphicLabel }</p>` : ''}
         </div>
-        ${buildCropVisualSvg(crop, enhancedMode)}
-        ${tinyBoostNote ? '<p class="crop-visual-note">Tiny crop highlight is visually boosted for clarity.</p>' : ''}
+        ${ buildCropVisualSvg(crop, enhancedMode) }
+        ${ tinyBoostNote ? '<p class="crop-visual-note">Tiny crop highlight is visually boosted for clarity.</p>' : '' }
       </div>
     `;
     box.style.display='block';
   }
 
-  function renderAspectRatioFinderResult(opts){
+  function renderAspectRatioFinderResult(opts) {
     const silent = !!(opts && opts.silent);
     const w = parseInt($('#ratio-width').value,10);
     const h = parseInt($('#ratio-height').value,10);
-    if(!w || !h){
-      if(!silent){ alert('Please enter both image width and height.'); }
+    if(!w || !h) {
+      if(!silent) { alert('Please enter both image width and height.'); }
       $('#aspect-ratio-result').style.display='none';
       $('#aspect-ratio-result-content').innerHTML='';
       $('#aspect-ratio-crop-visual').innerHTML='';
@@ -886,39 +886,39 @@
     const cropNeededClass = crop.croppedPixels > 0 ? 'crop-needed-emphasis' : '';
 
     $('#aspect-ratio-result-content').innerHTML = `
-      <p>Entered dimensions: <strong>${w.toLocaleString()} x ${h.toLocaleString()} px</strong></p>
-      <p>Exact aspect ratio: <strong>${simpleW}:${simpleH}</strong></p>
-      <p>Decimal ratio: <strong>${round(ratio)}:1</strong></p>
-      <p>Closest standard ratio: <strong>${closest.name}</strong></p>
-      <p>Crop preview target: <strong>${target.label}</strong></p>
-      <p class="${cropNeededClass}">Crop needed: <strong>${crop.croppedPixels.toLocaleString()} pixels (${round(crop.croppedPct)}%)</strong></p>
-      <p>Final crop size: <strong>${crop.keptW.toLocaleString()} x ${crop.keptH.toLocaleString()} px</strong></p>
-      <p>Removed from ${removedFromLabel}: <strong>${removedSummary}</strong></p>
+      <p>Entered dimensions: <strong>${ w.toLocaleString() } x ${ h.toLocaleString() } px</strong></p>
+      <p>Exact aspect ratio: <strong>${ simpleW }:${ simpleH }</strong></p>
+      <p>Decimal ratio: <strong>${ round(ratio) }:1</strong></p>
+      <p>Closest standard ratio: <strong>${ closest.name }</strong></p>
+      <p>Crop preview target: <strong>${ target.label }</strong></p>
+      <p class="${ cropNeededClass }">Crop needed: <strong>${ crop.croppedPixels.toLocaleString() } pixels (${ round(crop.croppedPct) }%)</strong></p>
+      <p>Final crop size: <strong>${ crop.keptW.toLocaleString() } x ${ crop.keptH.toLocaleString() } px</strong></p>
+      <p>Removed from ${ removedFromLabel }: <strong>${ removedSummary }</strong></p>
     `;
     $('#aspect-ratio-crop-visual').innerHTML = `
       <div class="crop-visual-head">
         <p class="crop-visual-title">Crop Preview</p>
-        ${cropGraphicLabel ? `<p class="crop-visual-inline-label">${cropGraphicLabel}</p>` : ''}
+        ${ cropGraphicLabel ? `<p class="crop-visual-inline-label">${ cropGraphicLabel }</p>` : ''}
       </div>
-      ${buildCropVisualSvg(crop, enhancedMode)}
-      ${tinyBoostNote ? '<p class="crop-visual-note">Tiny crop highlight is visually boosted for clarity.</p>' : ''}
+      ${ buildCropVisualSvg(crop, enhancedMode) }
+      ${ tinyBoostNote ? '<p class="crop-visual-note">Tiny crop highlight is visually boosted for clarity.</p>' : '' }
     `;
     $('#aspect-ratio-result').style.display='block';
   }
 
-  function refreshCropVisualsForMode(){
+  function refreshCropVisualsForMode() {
     syncPreviewModeUi();
     showAspectInfo();
     renderClosestAspectInfo('#pixel-aspect-info', $('#pixel-width').value, $('#pixel-height').value);
     renderClosestAspectInfo('#physical-aspect-info', $('#physical-width').value, $('#physical-height').value);
     renderClosestAspectInfo('#print-image-aspect-info', $('#image-width').value, $('#image-height').value);
-    if($('#aspect-ratio-result').style.display !== 'none'){
+    if($('#aspect-ratio-result').style.display !== 'none') {
       renderAspectRatioFinderResult({ silent: true });
     }
   }
 
-  function syncPreviewModeUi(){
-    $$('.preview-mode-option').forEach((label)=>{
+  function syncPreviewModeUi() {
+    $$('.preview-mode-option').forEach((label)=> {
       const input = label.querySelector('input[name="crop-visual-mode"]');
       if(!input) return;
       label.classList.toggle('is-selected', !!input.checked);
@@ -926,7 +926,7 @@
   }
 
   // Aspect info
-  function showAspectInfo(){
+  function showAspectInfo() {
     const w = parseInt($('#original-width').value,10);
     const h = parseInt($('#original-height').value,10);
     const selectedRatio = parseFloat($('#aspect-ratio').value);
@@ -936,7 +936,7 @@
       : undefined;
     renderClosestAspectInfo('#aspect-ratio-info', w, h, options);
     const box = $('#aspect-ratio-info');
-    if(box && box.style.display !== 'none'){
+    if(box && box.style.display !== 'none') {
       box.innerHTML += `<p style="margin-top:8px; margin-bottom:0;">Tip: Keep "Original" to preserve your ratio, or pick a preset to preview cropping.</p>`;
     }
   }
@@ -951,25 +951,25 @@
   $('#image-height').addEventListener('input', ()=> renderClosestAspectInfo('#print-image-aspect-info', $('#image-width').value, $('#image-height').value));
 
   // Aspect ratio finder
-  $('#calculate-aspect-ratio').addEventListener('click', ()=>{
+  $('#calculate-aspect-ratio').addEventListener('click', ()=> {
     renderAspectRatioFinderResult({ silent: false });
   });
   $('#ratio-width').addEventListener('input', ()=> renderAspectRatioFinderResult({ silent: true }));
   $('#ratio-height').addEventListener('input', ()=> renderAspectRatioFinderResult({ silent: true }));
   $('#ratio-target-aspect').addEventListener('change', ()=> renderAspectRatioFinderResult({ silent: true }));
-  $('#reset-aspect-ratio').addEventListener('click', ()=>{
+  $('#reset-aspect-ratio').addEventListener('click', ()=> {
     $('#ratio-width').value=''; $('#ratio-height').value='';
     $('#ratio-target-aspect').value='auto';
     $('#aspect-ratio-result').style.display='none';
     $('#aspect-ratio-result-content').innerHTML='';
     $('#aspect-ratio-crop-visual').innerHTML='';
   });
-  $$('input[name="crop-visual-mode"]').forEach((input)=>{
+  $$('input[name="crop-visual-mode"]').forEach((input)=> {
     input.addEventListener('change', refreshCropVisualsForMode);
   });
   syncPreviewModeUi();
 
-  function runInitialPreviewHydration(){
+  function runInitialPreviewHydration() {
     // Run more than once so browser-restored/autofilled values are captured.
     refreshCropVisualsForMode();
     renderAspectRatioFinderResult({ silent: true });
@@ -984,18 +984,18 @@
   globalThis.addEventListener('pageshow', runInitialPreviewHydration);
 
   // Original calculator
-  function calculateOriginal(){
+  function calculateOriginal() {
     const w = parseInt($('#original-width').value,10);
     const h = parseInt($('#original-height').value,10);
     const ar = parseFloat($('#aspect-ratio').value);
     const ppi = parseInt($('#original-quality').value,10);
-    if(!w || !h){ alert('Please enter both photo width and height.'); return; }
+    if(!w || !h) { alert('Please enter both photo width and height.'); return; }
 
     let cw=w, ch=h;
-    if(ar!==0){
+    if(ar!==0) {
       const cr = w/h;
-      if(cr > ar){ cw = Math.round(h*ar); ch = h; }
-      else if(cr < ar){ cw = w; ch = Math.round(w/ar); }
+      if(cr > ar) { cw = Math.round(h*ar); ch = h; }
+      else if(cr < ar) { cw = w; ch = Math.round(w/ar); }
     }
 
     const maxW_in = cw/ppi, maxH_in = ch/ppi;
@@ -1003,10 +1003,10 @@
 
     $('#original-result').innerHTML = `
       <h4 class="results-title">Results</h4>
-      <p>Original: <strong>${w}</strong> x <strong>${h}</strong> px</p>
-      <p>Converted (after aspect): <strong>${cw}</strong> x <strong>${ch}</strong> px</p>
-      <p>Megapixels: <strong>${mp} MP</strong></p>
-      <p>Max print @ ${ppi} PPI: <strong>${round(maxW_in)}" x ${round(maxH_in)}"</strong></p>
+      <p>Original: <strong>${ w }</strong> x <strong>${ h }</strong> px</p>
+      <p>Converted (after aspect): <strong>${ cw }</strong> x <strong>${ ch }</strong> px</p>
+      <p>Megapixels: <strong>${ mp } MP</strong></p>
+      <p>Max print @ ${ ppi } PPI: <strong>${ round(maxW_in) }" x ${ round(maxH_in) }"</strong></p>
     `;
     $('#original-result').style.display='block';
 
@@ -1019,45 +1019,45 @@
       </tr></thead><tbody>
     `;
 
-    PRINT_SIZES.forEach(cat=>{
+    PRINT_SIZES.forEach(cat=> {
       const trHeader = document.createElement('tr');
       trHeader.className = 'category-header';
-      trHeader.innerHTML = `<td colspan="6">${cat.category}</td>`;
+      trHeader.innerHTML = `<td colspan="6">${ cat.category }</td>`;
       tbody.appendChild(trHeader);
-      printableHTML += `<tr class="category-header"><td colspan="6">${cat.category}</td></tr>`;
+      printableHTML += `<tr class="category-header"><td colspan="6">${ cat.category }</td></tr>`;
 
-      cat.sizes.forEach(s=>{
+      cat.sizes.forEach(s=> {
         const reqMP = ((s.w*s.h*ppi*ppi)/1e6).toFixed(2);
         const eff = Math.min(cw/s.w, ch/s.h);
         let qTxt='✗ Poor (<150 PPI)', qClass='quality-poor';
-        if(eff>=300){ qTxt='✓ Excellent (300+ PPI)'; qClass='quality-excellent'; }
-        else if(eff>=240){ qTxt='✓ Very Good (240+ PPI)'; qClass='quality-verygood'; }
-        else if(eff>=180){ qTxt='✓ Good (180+ PPI)'; qClass='quality-good'; }
-        else if(eff>=150){ qTxt='✓ Fair (150+ PPI)'; qClass='quality-fair'; }
+        if(eff>=300) { qTxt='✓ Excellent (300+ PPI)'; qClass='quality-excellent'; }
+        else if(eff>=240) { qTxt='✓ Very Good (240+ PPI)'; qClass='quality-verygood'; }
+        else if(eff>=180) { qTxt='✓ Good (180+ PPI)'; qClass='quality-good'; }
+        else if(eff>=150) { qTxt='✓ Fair (150+ PPI)'; qClass='quality-fair'; }
         const dIn = Math.sqrt(s.w*s.w + s.h*s.h);
         const view = Math.round(dIn*2);
         const g = gcd(s.w, s.h);
-        const arLabel = `${s.w/g}:${s.h/g}`;
+        const arLabel = `${ s.w/g }:${ s.h/g }`;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${s.name}</td>
-          <td>${s.w}" x ${s.h}"</td>
-          <td>${arLabel}</td>
-          <td>${reqMP} MP</td>
-          <td>${view}" min</td>
-          <td><span class="${qClass}">${qTxt}</span></td>
+          <td>${ s.name }</td>
+          <td>${ s.w }" x ${ s.h }"</td>
+          <td>${ arLabel }</td>
+          <td>${ reqMP } MP</td>
+          <td>${ view }" min</td>
+          <td><span class="${ qClass }">${ qTxt }</span></td>
         `;
         tbody.appendChild(tr);
 
         printableHTML += `
           <tr>
-            <td>${s.name}</td>
-            <td>${s.w}" x ${s.h}"</td>
-            <td>${arLabel}</td>
-            <td>${reqMP} MP</td>
-            <td>${view}" min</td>
-            <td>${qTxt}</td>
+            <td>${ s.name }</td>
+            <td>${ s.w }" x ${ s.h }"</td>
+            <td>${ arLabel }</td>
+            <td>${ reqMP } MP</td>
+            <td>${ view }" min</td>
+            <td>${ qTxt }</td>
           </tr>
         `;
       });
@@ -1071,71 +1071,71 @@
   $('#original-calculate').addEventListener('click', calculateOriginal);
 
   // File size estimator
-  function calculateFileSize(pxW, pxH){
+  function calculateFileSize(pxW, pxH) {
     const depth = parseInt($('#color-depth').value,10);
     const bits = pxW*pxH*depth;
     const bytes = bits/8, kb = bytes/1024, mb = kb/1024;
     $('#file-size-table').innerHTML = `
-      <tr><td>Bits</td><td>${bits.toLocaleString()}</td></tr>
-      <tr><td>Bytes</td><td>${Math.round(bytes).toLocaleString()}</td></tr>
-      <tr><td>Kilobytes (KB)</td><td>${round(kb)}</td></tr>
-      <tr><td>Megabytes (MB)</td><td>${round(mb)}</td></tr>
+      <tr><td>Bits</td><td>${ bits.toLocaleString() }</td></tr>
+      <tr><td>Bytes</td><td>${ Math.round(bytes).toLocaleString() }</td></tr>
+      <tr><td>Kilobytes (KB)</td><td>${ round(kb) }</td></tr>
+      <tr><td>Megabytes (MB)</td><td>${ round(mb) }</td></tr>
     `;
     $('#file-size-result').style.display='block';
   }
 
   // Pixel → Physical
-  $('#calculate-pixel-to-physical').addEventListener('click', ()=>{
+  $('#calculate-pixel-to-physical').addEventListener('click', ()=> {
     const pw = parseFloat($('#pixel-width').value);
     const ph = parseFloat($('#pixel-height').value);
     const dpi = parseFloat($('#dpi').value);
-    if(!pw || !ph || !dpi){ alert('Please enter all required values.'); return; }
+    if(!pw || !ph || !dpi) { alert('Please enter all required values.'); return; }
     const wIn = pw/dpi, hIn = ph/dpi;
     const wOut = inchesTo(wIn, currentUnit), hOut = inchesTo(hIn, currentUnit);
     const mp = (pw*ph/1e6).toFixed(2);
     $('#pixel-to-physical-result-content').innerHTML = `
-      <p>Physical Size: <strong>${round(wOut)} x ${round(hOut)} ${unitLabel(currentUnit)}</strong></p>
-      <p>Megapixels: <strong>${mp} MP</strong></p>
+      <p>Physical Size: <strong>${ round(wOut) } x ${ round(hOut) } ${ unitLabel(currentUnit) }</strong></p>
+      <p>Megapixels: <strong>${ mp } MP</strong></p>
     `;
     $('#pixel-to-physical-result').style.display='block';
     calculateFileSize(pw, ph);
   });
 
   // Physical → Pixel
-  $('#calculate-physical-to-pixel').addEventListener('click', ()=>{
+  $('#calculate-physical-to-pixel').addEventListener('click', ()=> {
     const pw = parseFloat($('#physical-width').value);
     const ph = parseFloat($('#physical-height').value);
     const dpi = parseFloat($('#target-dpi').value);
-    if(!pw || !ph || !dpi){ alert('Please enter all required values.'); return; }
+    if(!pw || !ph || !dpi) { alert('Please enter all required values.'); return; }
     const wIn = currentUnit==='in' ? pw : currentUnit==='cm' ? pw/2.54 : pw/25.4;
     const hIn = currentUnit==='in' ? ph : currentUnit==='cm' ? ph/2.54 : ph/25.4;
     const pxW = Math.round(wIn*dpi), pxH = Math.round(hIn*dpi);
     const mp = (pxW*pxH/1e6).toFixed(2);
     $('#physical-to-pixel-result-content').innerHTML = `
-      <p>Required Resolution: <strong>${pxW.toLocaleString()} x ${pxH.toLocaleString()} pixels</strong></p>
-      <p>Megapixels: <strong>${mp} MP</strong></p>
+      <p>Required Resolution: <strong>${ pxW.toLocaleString() } x ${ pxH.toLocaleString() } pixels</strong></p>
+      <p>Megapixels: <strong>${ mp } MP</strong></p>
     `;
     $('#physical-to-pixel-result').style.display='block';
     calculateFileSize(pxW, pxH);
   });
 
   // Print quality
-  $('#calculate-print-quality').addEventListener('click', ()=>{
+  $('#calculate-print-quality').addEventListener('click', ()=> {
     const iw = parseFloat($('#image-width').value);
     const ih = parseFloat($('#image-height').value);
     const pw = parseFloat($('#print-width').value);
     const ph = parseFloat($('#print-height').value);
-    if(!iw || !ih || !pw || !ph){ alert('Please enter all required values.'); return; }
+    if(!iw || !ih || !pw || !ph) { alert('Please enter all required values.'); return; }
     const wIn = currentUnit==='in' ? pw : currentUnit==='cm' ? pw/2.54 : pw/25.4;
     const hIn = currentUnit==='in' ? ph : currentUnit==='cm' ? ph/2.54 : ph/25.4;
     const dpiW = iw / wIn, dpiH = ih / hIn;
     const eff = Math.min(dpiW, dpiH);
 
     let qTxt='Poor', qClass='quality-poor';
-    if(eff>=300){ qTxt='Excellent (300+ PPI)'; qClass='quality-excellent'; }
-    else if(eff>=240){ qTxt='Very Good (240+ PPI)'; qClass='quality-verygood'; }
-    else if(eff>=180){ qTxt='Good (180+ PPI)'; qClass='quality-good'; }
-    else if(eff>=150){ qTxt='Fair (150+ PPI)'; qClass='quality-fair'; }
+    if(eff>=300) { qTxt='Excellent (300+ PPI)'; qClass='quality-excellent'; }
+    else if(eff>=240) { qTxt='Very Good (240+ PPI)'; qClass='quality-verygood'; }
+    else if(eff>=180) { qTxt='Good (180+ PPI)'; qClass='quality-good'; }
+    else if(eff>=150) { qTxt='Fair (150+ PPI)'; qClass='quality-fair'; }
 
     const diagIn = Math.sqrt(wIn*wIn + hIn*hIn);
     const viewIn = Math.round(diagIn*2);
@@ -1143,36 +1143,36 @@
     const u = unitLabel(currentUnit);
 
     $('#print-quality-result-content').innerHTML = `
-      <p>Effective Resolution: <strong>${round(eff)}</strong> DPI</p>
-      <p>Print Quality: <span class="${qClass}">${qTxt}</span></p>
-      <p>Recommended Minimum Viewing Distance: <strong>${round(viewOut)}</strong> ${u}</p>
+      <p>Effective Resolution: <strong>${ round(eff) }</strong> DPI</p>
+      <p>Print Quality: <span class="${ qClass }">${ qTxt }</span></p>
+      <p>Recommended Minimum Viewing Distance: <strong>${ round(viewOut) }</strong> ${ u }</p>
     `;
     $('#print-quality-result').style.display='block';
     calculateFileSize(iw, ih);
   });
 
   // Print & resets
-  $('#original-print').addEventListener('click', ()=>{
-    if($('#printable-table').innerHTML.trim()===''){ alert('Please calculate results before printing.'); return; }
+  $('#original-print').addEventListener('click', ()=> {
+    if($('#printable-table').innerHTML.trim()==='') { alert('Please calculate results before printing.'); return; }
     window.print();
   });
-  $('#original-reset').addEventListener('click', ()=>{
+  $('#original-reset').addEventListener('click', ()=> {
     $('#original-width').value=''; $('#original-height').value='';
     $('#aspect-ratio').value='0'; $('#original-quality').value='300';
     $('#original-result').style.display='none'; $('#sizesTable').style.display='none';
     $('#aspect-ratio-info').style.display='none'; $('#file-size-result').style.display='none';
   });
-  $('#reset-pixel-to-physical').addEventListener('click', ()=>{
+  $('#reset-pixel-to-physical').addEventListener('click', ()=> {
     $('#pixel-width').value=''; $('#pixel-height').value=''; $('#dpi').value='300';
     $('#pixel-to-physical-result').style.display='none'; $('#file-size-result').style.display='none';
     $('#pixel-aspect-info').style.display='none'; $('#pixel-aspect-info').innerHTML='';
   });
-  $('#reset-physical-to-pixel').addEventListener('click', ()=>{
+  $('#reset-physical-to-pixel').addEventListener('click', ()=> {
     $('#physical-width').value=''; $('#physical-height').value=''; $('#target-dpi').value='300';
     $('#physical-to-pixel-result').style.display='none'; $('#file-size-result').style.display='none';
     $('#physical-aspect-info').style.display='none'; $('#physical-aspect-info').innerHTML='';
   });
-  $('#reset-print-quality').addEventListener('click', ()=>{
+  $('#reset-print-quality').addEventListener('click', ()=> {
     $('#image-width').value=''; $('#image-height').value='';
     $('#print-width').value=''; $('#print-height').value='';
     $('#print-quality-result').style.display='none'; $('#file-size-result').style.display='none';
